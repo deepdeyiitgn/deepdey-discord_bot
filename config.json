@@ -1,0 +1,6 @@
+{
+  "prefix": "!",
+  "announcement_channel_id": null,
+  "quote_interval": 600,
+  "reminder_check_interval": 60
+}

@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+.venv/
+venv/
+
+# VS Code
+.vscode/
+
+# Logs
+logs/
+*.log
+
+# Database
+*.db
+*.sqlite3
+
+# Media files
+media/*
+!media/.gitkeep

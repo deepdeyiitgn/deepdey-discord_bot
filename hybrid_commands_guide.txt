@@ -1,0 +1,55 @@
+To convert all commands to hybrid commands, follow these steps for each cog:
+
+1. Import required modules at the top of each cog:
+```python
+from discord import app_commands
+```
+
+2. Convert each command to a hybrid command by:
+   - Replacing @commands.command() with @commands.hybrid_command()
+   - Adding description parameter for slash command display
+   - Adding app_commands.describe() for parameter descriptions
+
+Example conversion:
+```python
+# Before:
+@commands.command(name='example')
+async def example_command(self, ctx, param1: str):
+    await ctx.send(f"Example: {param1}")
+
+# After:
+@commands.hybrid_command(name='example', description='Example command description')
+@app_commands.describe(param1='Description of param1')
+async def example_command(self, ctx, param1: str):
+    await ctx.send(f"Example: {param1}")
+```
+
+3. For commands with optional parameters:
+```python
+@commands.hybrid_command(name='command', description='Command description')
+@app_commands.describe(
+    param1='Description of required param',
+    param2='Description of optional param'
+)
+async def command(self, ctx, param1: str, param2: str = None):
+    if param2 is None:
+        param2 = "default value"
+    await ctx.send(f"{param1} {param2}")
+```
+
+4. For commands with complex types:
+- Use discord.Member for user mentions
+- Use discord.TextChannel for channel mentions
+- Use discord.Role for role mentions
+- Use int for numbers
+- Use str for text
+
+5. Sync commands after changes:
+- Bot will automatically sync commands on startup
+- Use !sync or /sync command to manually sync (admin only)
+
+Remember:
+- Keep command names consistent between prefix and slash versions
+- Add meaningful descriptions for all parameters
+- Test both prefix and slash versions after conversion
+- Use proper type hints for parameters

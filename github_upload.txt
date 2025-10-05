@@ -1,0 +1,26 @@
+GitHub upload commands (copy/paste)
+
+PowerShell:
+
+.
+# activate venv if desired
+.\.venv\Scripts\Activate.ps1
+# initialize and push
+git init
+git add .
+git commit -m "Initial commit - StudyBot"
+git branch -M main
+git remote add origin https://github.com/<your-username>/<your-repo>.git
+git push -u origin main
+
+Bash:
+
+# activate venv if desired
+source .venv/bin/activate
+# initialize and push
+git init
+git add .
+git commit -m "Initial commit - StudyBot"
+git branch -M main
+git remote add origin https://github.com/<your-username>/<your-repo>.git
+git push -u origin main

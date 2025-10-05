@@ -1,0 +1,25 @@
+{
+  "channels": {},
+  "pairs": {
+    "hello": "Hey there! Need help with studying?",
+    "hi": "Hi! I'm here to help you study.",
+    "brb": "See you soon! Good luck with your break.",
+    "good luck": "Thanks! Wishing you success on your studies.",
+    "congrats": "Congrats! Keep up the great work.",
+    "how are you": "I'm a bot — always ready to help you study!",
+    "thanks": "You're welcome!",
+    "ty": "No problem!",
+    "deadline": "Don't panic — break the task into small chunks.",
+    "exam": "Focus on key concepts and practice past papers.",
+    "motivation": "Keep going — consistency beats intensity.",
+    "study tip": "Use spaced repetition and active recall for better retention.",
+    "help": "If you need help, try asking a specific question or use !todo to track tasks.",
+    "assignment": "Start early and break the assignment into steps.",
+    "project": "Collaborate with your team and set small milestones.",
+    "sleep": "Rest is important — take short breaks and get enough sleep.",
+    "coffee": "A little caffeine can help, but don't rely on it.",
+    "focus": "Try the Pomodoro technique: 25 minutes study, 5 minutes break.",
+    "notes": "Organize notes by topic and review regularly.",
+    "question": "Ask the group or check your materials. If stuck, ask me!"
+  }
+}
