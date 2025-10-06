@@ -15,6 +15,24 @@ from discord.ext import commands
 from discord import app_commands
 from utils.chat_logger import ChatLogger
 from utils.mod_logger import ModLogger
+from flask import Flask
+from threading import Thread
+import logging
+logging.getLogger('werkzeug').setLevel(logging.ERROR)
+
+app = Flask('')
+
+@app.route('/')
+def home():
+    return "Bot is alive!"
+
+def run_flask():
+    app.run(host='0.0.0.0', port=8080)
+
+def keep_alive():
+    t = Thread(target=run_flask)
+    t.daemon = True
+    t.start()
 
 
 BASE_DIR = Path(__file__).parent
@@ -311,6 +329,7 @@ async def main():
 
 if __name__ == '__main__':
     try:
+        keep_alive()  # Start tiny Flask server to keep bot awake
         ret = asyncio.run(main())
         if isinstance(ret, int) and ret != 0:
             sys.exit(ret)
