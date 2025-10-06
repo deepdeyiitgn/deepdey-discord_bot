@@ -5,3 +5,4 @@ requests
 aiosqlite
 pytz
 aiohttp
+Flask>=2.3.2
