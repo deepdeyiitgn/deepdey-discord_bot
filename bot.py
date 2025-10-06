@@ -299,13 +299,11 @@ async def main():
         print("You can also set the environment variables directly.")
         return 1
 
-    # Initialize bot
-    global bot
-    bot = StudyBot()
-    
     print(f"Starting bot with prefix '!' and syncing commands...")
     try:
-        await bot.start(token)
+        # Use `async with bot` to ensure the bot is closed properly on exit
+        async with bot:
+            await bot.start(token)
     except Exception as e:
         print(f"Error starting bot: {e}")
         return 1

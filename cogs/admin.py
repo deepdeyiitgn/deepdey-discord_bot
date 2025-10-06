@@ -1,12 +1,22 @@
-"""Admin module for moderation commands"""
+"""Admin module for moderation commands.
+
+Commands are available in both prefix (!) and slash (/) versions.
+All admin commands require appropriate permissions.
+"""
 import discord
 from discord.ext import commands
 from discord import app_commands
+from discord.ui import View, Button
+from pathlib import Path
+from utils.helper import async_load_json, async_save_json
+import asyncio
+from typing import Optional
 import logging
 import sys
 import datetime
 
-# Configure logging with UTF-8 encoding
+
+# Configure logging with UTF-8 encoding and add file/terminal handlers
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -17,22 +27,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger('admin')
 
-Commands are available in both prefix (!) and slash (/) versions.
-All admin commands require appropriate permissions.
-"""
-from discord.ext import commands
-import discord
-from pathlib import Path
-from utils.helper import async_load_json, async_save_json
-import asyncio
-from discord import app_commands
-from discord.ui import View, Button
-from typing import Optional
-import logging
-import datetime
-
-
-# Set up logging
+# Set up additional file/terminal handlers under the LOG_DIR
 LOG_DIR = Path(__file__).parent.parent / 'logs'
 LOG_DIR.mkdir(exist_ok=True)
 
@@ -41,16 +36,12 @@ logger.setLevel(logging.INFO)
 
 # File handler for audit log
 audit_handler = logging.FileHandler(LOG_DIR / 'mod_actions.log')
-audit_handler.setFormatter(logging.Formatter(
-    '%(asctime)s - %(levelname)s - %(message)s'
-))
+audit_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 logger.addHandler(audit_handler)
 
-# Terminal handler
+# Terminal handler with colored output
 terminal_handler = logging.StreamHandler()
-terminal_handler.setFormatter(logging.Formatter(
-    '\033[1;33m%(asctime)s - %(levelname)s - %(message)s\033[0m'
-))
+terminal_handler.setFormatter(logging.Formatter('\033[1;33m%(asctime)s - %(levelname)s - %(message)s\033[0m'))
 logger.addHandler(terminal_handler)
 
 

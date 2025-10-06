@@ -54,9 +54,11 @@ class AFK(commands.Cog):
         """Set or remove AFK status"""
         if isinstance(ctx, discord.Interaction):
             interaction = ctx
+            print(f"[AFK] Received Interaction: user={getattr(interaction, 'user', None)} guild={getattr(interaction, 'guild', None)} reason={reason}")
             # Try to defer so we have time to make edits
             try:
                 await interaction.response.defer(ephemeral=True)
+                print(f"[AFK] interaction.response.defer called for {interaction.user}")
             except Exception:
                 pass
 
@@ -68,37 +70,62 @@ class AFK(commands.Cog):
             if reason and reason.lower().strip() == 'remove':
                 data = await self._get_afk(interaction.guild.id, interaction.user.id)
                 if not data:
-                    await interaction.followup.send('You are not AFK.', ephemeral=True)
+                    try:
+                        await interaction.followup.send('You are not AFK.', ephemeral=True)
+                        print(f"[AFK] followup: user not AFK: {interaction.user}")
+                    except Exception:
+                        print(f"[AFK] could not send followup: user not AFK: {interaction.user}")
                     return
                 try:
                     orig = data.get('orig_nick')
-                    if orig:
-                        await interaction.user.edit(nick=orig)
+                    # fetch guild Member object to edit nick
+                    member = interaction.guild.get_member(interaction.user.id)
+                    if member:
+                        if orig:
+                            await member.edit(nick=orig)
+                        else:
+                            await member.edit(nick=None)
                     else:
-                        await interaction.user.edit(nick=None)
+                        print(f"[AFK] member not found in guild for removal: {interaction.user.id}")
                 except Exception:
-                    pass
+                    print(f"[AFK] exception editing nick during AFK removal for {interaction.user}")
                 await self._remove_afk(interaction.guild.id, interaction.user.id)
-                await interaction.followup.send('AFK removed.', ephemeral=True)
+                try:
+                    await interaction.followup.send('AFK removed.', ephemeral=True)
+                    print(f"[AFK] AFK removed for {interaction.user}")
+                except Exception:
+                    print(f"[AFK] could not send followup AFK removed for {interaction.user}")
                 return
 
             # Set AFK
             reason = reason or 'Away'
             orig = None
             try:
-                orig = interaction.user.nick
-                new_nick = (AFK_PREFIX + (orig or interaction.user.name))[:32]
-                await interaction.user.edit(nick=new_nick)
+                # fetch member object for nickname editing
+                member = interaction.guild.get_member(interaction.user.id)
+                if member:
+                    orig = member.nick
+                    new_nick = (AFK_PREFIX + (orig or member.name))[:32]
+                    await member.edit(nick=new_nick)
+                    print(f"[AFK] set nick for {member} -> {new_nick}")
+                else:
+                    print(f"[AFK] could not find member in guild to set nick: {interaction.user.id}")
             except Exception:
-                pass
+                print(f"[AFK] exception editing nick for set AFK for {interaction.user}")
             await self._set_afk(interaction.guild.id, interaction.user.id, {'reason': reason, 'orig_nick': orig})
-            await interaction.followup.send(f'Set AFK: {reason}', ephemeral=True)
+            try:
+                await interaction.followup.send(f'Set AFK: {reason}', ephemeral=True)
+                print(f"[AFK] Set AFK stored for {interaction.user} reason={reason}")
+            except Exception:
+                print(f"[AFK] could not send followup set AFK for {interaction.user}")
 
         else:
+            print(f"[AFK] Received Context command: author={ctx.author} guild={getattr(ctx, 'guild', None)} reason={reason}")
             if reason and reason.lower().strip() == 'remove':
                 data = await self._get_afk(ctx.guild.id, ctx.author.id)
                 if not data:
                     await ctx.send('You are not AFK.')
+                    print(f"[AFK] ctx: user not AFK: {ctx.author}")
                     return
                 try:
                     orig = data.get('orig_nick')
@@ -107,9 +134,10 @@ class AFK(commands.Cog):
                     else:
                         await ctx.author.edit(nick=None)
                 except Exception:
-                    pass
+                    print(f"[AFK] exception editing nick during ctx AFK removal for {ctx.author}")
                 await self._remove_afk(ctx.guild.id, ctx.author.id)
                 await ctx.send('AFK removed.')
+                print(f"[AFK] ctx AFK removed for {ctx.author}")
                 return
 
             # Set AFK
@@ -119,48 +147,13 @@ class AFK(commands.Cog):
                 orig = ctx.author.nick
                 new_nick = (AFK_PREFIX + (orig or ctx.author.name))[:32]
                 await ctx.author.edit(nick=new_nick)
+                print(f"[AFK] ctx set nick for {ctx.author} -> {new_nick}")
             except Exception:
-                pass
+                print(f"[AFK] exception editing nick during ctx set AFK for {ctx.author}")
             await self._set_afk(ctx.guild.id, ctx.author.id, {'reason': reason, 'orig_nick': orig})
             await ctx.send(f'Set AFK: {reason}')
-        if reason and reason.lower().strip() == 'remove':
-            # guard for DMs
-            if not interaction.guild:
-                await interaction.response.send_message('AFK removal must be used in a server.', ephemeral=True)
-                return
-            data = await self._get_afk(interaction.guild.id, interaction.user.id)
-            if not data:
-                await interaction.followup.send('You are not AFK.', ephemeral=True)
-                return
-            try:
-                orig = data.get('orig_nick')
-                # fetch member object
-                member = interaction.guild.get_member(interaction.user.id)
-                if member:
-                    await member.edit(nick=orig)
-            except Exception:
-                pass
-            await self._remove_afk(interaction.guild.id, interaction.user.id)
-            await interaction.response.send_message('AFK removed.', ephemeral=True)
-            return
-
-        reason = reason or 'Away'
-        orig = None
-        try:
-            if not interaction.guild:
-                # cannot set guild nick in DMs
-                await interaction.response.send_message('AFK can only be set in a server (use the server where you want the AFK tag).', ephemeral=True)
-                return
-            member = interaction.guild.get_member(interaction.user.id)
-            if member:
-                orig = member.nick
-                new_nick = (AFK_PREFIX + (orig or member.name))[:32]
-                await member.edit(nick=new_nick)
-        except Exception:
-            # ignore nick edit failures but continue
-            pass
-        await self._set_afk(interaction.guild.id, interaction.user.id, {'reason': reason, 'orig_nick': orig})
-        await interaction.response.send_message(f'Set AFK: {reason}', ephemeral=True)
+            print(f"[AFK] ctx Set AFK stored for {ctx.author} reason={reason}")
+        # End of command - all interaction and ctx handling is done above in their branches.
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):

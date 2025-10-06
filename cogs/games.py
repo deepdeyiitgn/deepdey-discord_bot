@@ -654,7 +654,7 @@ class Games(commands.Cog):
     async def _run_quiz_for_user(self, user: discord.User, channel: discord.abc.Messageable):
         # Load questions from games_bank.json
         try:
-            with open('data/games_bank.json', 'r') as f:
+            with open('data/games_bank.json', 'r', encoding='utf-8') as f:
                 games_bank = json.load(f)
                 questions = random.sample(games_bank['quiz'], min(10, len(games_bank['quiz'])))
         except Exception as e:
@@ -802,6 +802,33 @@ class Games(commands.Cog):
                 await dm.send(embed=results)
             except Exception:
                 pass
+
+        # If Gemini is enabled for this guild/channel, request explanations for wrong answers
+        try:
+            if wrong_answers:
+                # attempt to get the GeminiReply cog
+                gemini_cog = self.bot.get_cog('GeminiReply')
+                if gemini_cog:
+                    # Check permission for channel/guild
+                    guild_id = channel.guild.id if hasattr(channel, 'guild') and channel.guild else None
+                    channel_id = channel.id if hasattr(channel, 'id') else None
+                    enabled = await gemini_cog.is_enabled_for_channel(guild_id, channel_id)
+                    if enabled:
+                        # prepare questions summary to explain
+                        qtxt = "\n\n".join([f"Q: {q}\nCorrect: {a}" for q, a in wrong_answers])
+                        explanation = await gemini_cog.explain_questions(qtxt)
+                        # send explanation in DM to user to avoid clutter
+                        try:
+                            dm = await user.create_dm()
+                            await dm.send(f"Here are explanations for the questions you missed:\n\n{explanation}")
+                        except Exception:
+                            # fallback: send in channel
+                            try:
+                                await channel.send(f"Here are explanations for the questions you missed:\n\n{explanation}")
+                            except Exception:
+                                pass
+        except Exception as e:
+            print(f"[GAMES] Error requesting Gemini explanations: {e}")
 
     @quiz.command(name='leaderboard')
     async def quiz_leaderboard(self, ctx, category: str = None):

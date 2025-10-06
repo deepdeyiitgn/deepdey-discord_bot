@@ -16,6 +16,131 @@
    
   <script src="script.js" defer></script>
 
+    <!-- ======================= -->
+<!-- Background Music Control -->
+<!-- ======================= -->
+
+<div id="bgm-popup">
+  <div class="bgm-header">
+    <img src="https://happysoulmusic.com/wp-content/grand-media/image/thumb/Aakash_Gandhi_free_music_download_1.webp" 
+         alt="BGM Logo" class="bgm-logo">
+    <span class="bgm-title">Now Playing</span>
+  </div>
+  <div class="bgm-controls">
+    <button id="bgm-playpause">⏸</button>
+    <button id="bgm-volup">🔊+</button>
+    <button id="bgm-voldown">🔉-</button>
+  </div>
+</div>
+
+<style>
+  /* Popup container */
+  #bgm-popup {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    backdrop-filter: blur(12px);
+    background: rgba(30, 30, 30, 0.55);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    font-family: Arial, sans-serif;
+    user-select: none;
+  }
+
+  .bgm-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .bgm-logo {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .bgm-title {
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  .bgm-controls {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .bgm-controls button {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #fff;
+    font-size: 14px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .bgm-controls button:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+</style>
+
+<script>
+  // Wait until bgMusic from script.js exists
+  document.addEventListener("DOMContentLoaded", () => {
+    const playPauseBtn = document.getElementById("bgm-playpause");
+    const volUpBtn = document.getElementById("bgm-volup");
+    const volDownBtn = document.getElementById("bgm-voldown");
+
+    const updateBtn = () => {
+      if (window.bgMusic && !window.bgMusic.paused) {
+        playPauseBtn.textContent = "⏸";
+      } else {
+        playPauseBtn.textContent = "▶️";
+      }
+    };
+
+    // Sync state from localStorage (for popup persistence)
+    if (localStorage.getItem("bg-music-paused") === "true" && window.bgMusic) {
+      window.bgMusic.pause();
+    }
+
+    updateBtn();
+
+    playPauseBtn.addEventListener("click", () => {
+      if (!window.bgMusic) return;
+      if (window.bgMusic.paused) {
+        window.bgMusic.play();
+        localStorage.setItem("bg-music-paused", "false");
+      } else {
+        window.bgMusic.pause();
+        localStorage.setItem("bg-music-paused", "true");
+      }
+      updateBtn();
+    });
+
+    volUpBtn.addEventListener("click", () => {
+      if (!window.bgMusic) return;
+      window.bgMusic.volume = Math.min(1, window.bgMusic.volume + 0.1);
+    });
+
+    volDownBtn.addEventListener("click", () => {
+      if (!window.bgMusic) return;
+      window.bgMusic.volume = Math.max(0, window.bgMusic.volume - 0.1);
+    });
+  });
+</script>
+
+
+
 
   <style>
     :root{
