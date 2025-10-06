@@ -1,0 +1,885 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>StudyBot — Your Study Companion • Deep Dey</title>
+
+  <!-- Favicon / Logo (provided) -->
+  <link rel="icon" href="https://i.postimg.cc/MHYsLfPz/Neon-Green-Circle-Frame-Fitness-You-Tube-Profile-Picturedurga-puja.png" />
+  <meta name="description" content="StudyBot — Modular Discord bot for students: reminders, quizzes, games & community features. Built by Deep Dey." />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Lobster&display=swap" rel="stylesheet">
+
+   <link rel="stylesheet" href="style.css">
+   
+  <script src="script.js" defer></script>
+
+
+  <style>
+    :root{
+      --accent: #FF5F1F;
+      --bg-1: linear-gradient(120deg,#0f172a 0%, #071024 60%);
+      --glass: rgba(255,255,255,0.06);
+      --card: rgba(255,255,255,0.03);
+      --radius: 16px;
+      --maxw: 1100px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:'Poppins',system-ui,Arial;background:var(--bg-1);color:#E6EEF8; -webkit-font-smoothing:antialiased;}
+    a{color:inherit;text-decoration:none}
+
+    /* Layout */
+    .wrap{max-width:var(--maxw);margin:0 auto;padding:36px 20px}
+    header{display:flex;align-items:center;gap:18px;padding:18px 0}
+    .logo{width:64px;height:64px;border-radius:50%;overflow:hidden;flex:0 0 64px;box-shadow:0 6px 30px rgba(0,0,0,0.6)}
+    .logo img{width:100%;height:100%;object-fit:cover}
+    .brand h1{margin:0;font-size:1.2rem;display:flex;align-items:center;gap:10px}
+    .brand small{display:block;color:#BFD7FF;font-weight:500;font-size:.85rem}
+
+    /* Hero */
+    .hero{display:grid;grid-template-columns:1fr 420px;gap:32px;align-items:center;padding:36px 0}
+    .hero-left h2{font-size:clamp(1.8rem,4.5vw,2.8rem);margin:6px 0;line-height:1.05}
+    .typing{color:var(--accent);font-weight:700}
+    .lead{color:#BFD7FF;font-size:1rem;margin:14px 0 20px}
+    .ctas{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{background:linear-gradient(90deg,var(--accent),#ff8a3d);border:none;padding:12px 18px;border-radius:12px;font-weight:700;cursor:pointer;box-shadow:0 8px 30px rgba(255,95,31,0.12)}
+    .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.08); color:#fff}
+    .hero-right{background:var(--card);padding:22px;border-radius:18px;box-shadow:0 10px 40px rgba(0,0,0,0.5)}
+    .hero-right h3{margin-top:0;color:#fff}
+    .pill{display:inline-block;background:rgba(255,255,255,0.03);padding:6px 10px;border-radius:999px;font-weight:600;margin-right:6px}
+
+    /* Sections */
+    section{padding:36px 0}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .card{background:var(--glass);padding:18px;border-radius:14px;border:1px solid rgba(255,255,255,0.03);min-height:120px}
+    .card h4{margin:0 0 8px;font-size:1.05rem}
+    .muted{color:#BFD7FF;font-size:.95rem}
+
+  /* Card animation (GPU-friendly) */
+  .card{transform:translateZ(0);will-change:transform,opacity}
+  .card.revealed{transform:translateY(0) scale(1);opacity:1}
+  .card{opacity:0;transform:translateY(18px) scale(.995);transition:opacity .6s cubic-bezier(.2,.9,.2,1), transform .6s cubic-bezier(.2,.9,.2,1)}
+
+    /* Sponsor / Footer */
+    .sponsor{display:flex;align-items:center;gap:16px;padding:14px;border-radius:12px;background:linear-gradient(90deg,#061227, #08142a);border:1px solid rgba(255,95,31,0.06)}
+    .sponsor img{width:64px;height:64px;border-radius:12px}
+    footer{padding:28px 0;color:#9FBCE8;font-size:.95rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+
+    /* Floating & Animations */
+    .float{animation:float 6s ease-in-out infinite}
+    @keyframes float{0%{transform:translateY(0)}50%{transform:translateY(-10px)}100%{transform:translateY(0)}}
+    .reveal{opacity:0;transform:translateY(18px);transition:all .7s cubic-bezier(.2,.9,.2,1)}
+    .reveal.visible{opacity:1;transform:none}
+
+    /* Header / Nav */
+    header{padding:20px 0;align-items:center}
+    nav a.btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:10px}
+    nav .btn{padding:10px 14px}
+
+    /* Card visuals */
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:20px;border-radius:14px;border:1px solid rgba(255,255,255,0.04);box-shadow:0 8px 30px rgba(4,6,14,0.6)}
+    .card h4{color:#fff}
+
+    /* Contact form */
+    .contact-form{max-width:820px;margin:18px auto;display:flex;flex-direction:column;gap:10px}
+    .contact-form label{color:#BFD7FF;font-weight:600}
+    .contact-form input,.contact-form textarea{padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);color:#EAF6FF}
+    .contact-form .btn{align-self:flex-start}
+
+    /* Responsive adjustments */
+    @media (max-width:980px){.hero{grid-template-columns:1fr}.grid{grid-template-columns:1fr 1fr}.wrap{padding:20px}}
+    @media (max-width:640px){.grid{grid-template-columns:1fr} .brand h1{font-size:1rem}.contact-form{padding:0 10px}}
+    @media (max-width:420px){nav a.btn.secondary{padding:6px 8px;font-size:.9rem}}
+    @media (min-width:1200px){.grid{grid-template-columns:repeat(3,1fr)}}
+    /* Header responsive stacking */
+    .main-nav{margin-left:auto;display:flex;align-items:center;gap:8px}
+    .nav-links{display:flex;gap:10px;align-items:center}
+    .hamburger{display:none}
+    @media (max-width:820px){
+      header{flex-wrap:wrap;align-items:flex-start}
+      .brand{order:1}
+      .logo{order:0}
+      .main-nav{order:2;width:100%;justify-content:flex-end}
+      .nav-links{display:none;width:100%;flex-direction:column;gap:8px;margin-top:10px}
+      .nav-links.show{display:flex}
+      .hamburger{display:inline-flex}
+      .hero{grid-template-columns:1fr}
+    }
+
+    /* Button & card animations */
+    .btn{transition:transform .18s ease, box-shadow .18s ease}
+    .btn:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(0,0,0,0.35)}
+    .btn:active{transform:translateY(-1px)}
+    .interactive-card{transition:transform .28s cubic-bezier(.2,.9,.2,1), box-shadow .28s}
+    .interactive-card:hover{transform:translateY(-8px) scale(1.01);box-shadow:0 20px 60px rgba(0,0,0,0.6)}
+
+    /* owner animated name */
+    #owner-anim{display:inline-block;position:relative}
+    @keyframes ownerPulse{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
+    #owner-anim.pulse{animation:ownerPulse 2.4s ease-in-out infinite}
+
+    /* small discord emoji sparkle */
+    .sparkle{display:inline-block;opacity:.9;filter:drop-shadow(0 4px 8px rgba(0,0,0,.45));transform-origin:center}
+    @keyframes floatEmoji{0%{transform:translateY(0)}50%{transform:translateY(-6px)}100%{transform:translateY(0)}}
+    .emoji-animated{animation:floatEmoji 3s ease-in-out infinite}
+  /* Section container consistency */
+  section{max-width:var(--maxw);margin:0 auto;padding:28px 18px}
+  .grid{gap:20px}
+  .sponsor{align-items:center}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+        <div class="logo float">
+          <img src="https://i.postimg.cc/MHYsLfPz/Neon-Green-Circle-Frame-Fitness-You-Tube-Profile-Picturedurga-puja.png" alt="StudyBot Logo" />
+        </div>
+        <div class="brand">
+          <h1>StudyBot <span id="owner-name" style="font-size:.85rem;color:#fff;opacity:.95;display:inline-block;margin-left:8px">— by <span id="owner-anim">Deep Dey</span></span></h1>
+          <small>Modular Discord bot • Study tools, quizzes, reminders, games</small>
+        </div>
+
+        <nav class="main-nav" aria-label="Primary navigation">
+          <button id="hamburger" class="btn secondary hamburger" aria-label="Open menu">☰</button>
+          <div id="nav-links" class="nav-links">
+            <a class="btn" href="https://discord.gg/tVzdXxKm2t" target="_blank" rel="noopener">💬 Chat on Discord</a>
+            <a class="btn secondary" href="https://github.com/deepdeyiitgn/deepdey-discord_bot" target="_blank" rel="noopener">View Code</a>
+            <a class="btn secondary" href="#features">Features</a>
+            <a class="btn secondary" href="#commands">Commands</a>
+            <a class="btn secondary" href="#build">Build</a>
+            <a class="btn secondary" href="#faq">FAQ</a>
+            <button id="toggle-smooth-header" class="btn secondary" title="Toggle smooth animations">Smooth</button>
+          </div>
+        </nav>
+    </header>
+
+    <main class="hero">
+      <div class="hero-left">
+        <div class="reveal" data-delay="0">
+          <h2>📚 <span class="typing">StudyBot</span> — Your Study Companion for focus & fun</h2>
+          <p class="lead">Modular Discord bot built to help students study smarter with reminders, quizzes, leaderboards and light games — made by <strong>Deep Dey</strong>.</p>
+          <p class="muted">New: interactive study rooms, daily challenges, progress tracking and gentle reminders to keep your revision consistent. Use quick slash commands to start a timed quiz, add a todo, or schedule a reminder in seconds.</p>
+          <div class="ctas">
+            <a class="btn" href="https://discord.gg/tVzdXxKm2t" target="_blank" rel="noopener">Join the server • Chat now</a>
+            <a class="btn secondary" href="#features">See features</a>
+            <a class="btn" href="404.html" style="background:linear-gradient(90deg,#00ff99,#00cfff);color:#222;font-weight:700;box-shadow:0 2px 12px rgba(0,255,153,0.15);border-radius:16px;" title="Play offline games hub">🎮 Play Games Hub</a>
+          </div>
+        </div>
+
+        <div style="margin-top:18px" class="reveal" data-delay="80">
+          <div class="card interactive-card">
+            <h4>Interactive demo</h4>
+            <p class="muted">Try commands in the server: <code>/quiz start</code>, <code>!todo add</code>. Hover cards for quick actions.</p>
+            <div style="margin-top:10px;display:flex;gap:8px">
+              <button class="btn" id="try-quiz">Try quiz demo</button>
+              <button class="btn secondary" id="try-todo">Add a todo</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:26px">
+          <div class="reveal" data-delay="100">
+            <div class="card">
+              <h4>How it works</h4>
+              <p class="muted">StudyBot lives in a private study server. To try the bot, join the server (chat button above). Commands: prefix <code>!</code> and modern slash <code>/</code> commands. Use <code>!help</code> or <code>/help</code>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="hero-right reveal" data-delay="120">
+        <h3>Quick highlights</h3>
+        <p class="muted">Pick the cogs you need: reminders, todos, announcements, quizzes, memory games, AFK, quotes and admin tools.</p>
+
+        <div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px">
+          <span class="pill">Prefix: !</span>
+          <span class="pill">Slash: /</span>
+          <span class="pill">Python</span>
+          <span class="pill">discord.py</span>
+        </div>
+
+        <div style="margin-top:16px;display:flex;gap:8px">
+          <a class="btn" href="https://discord.gg/tVzdXxKm2t" target="_blank" rel="noopener">Join Server</a>
+          <a class="btn secondary" href="https://github.com/deepdeyiitgn/deepdey-discord_bot" target="_blank" rel="noopener">Repo</a>
+        </div>
+      </aside>
+    </main>
+
+    <section id="features">
+      <div class="reveal" data-delay="140"><h3>Features</h3></div>
+      <div style="margin-top:14px">
+        <div class="grid" style="margin-top:14px">
+          <div class="card reveal" data-delay="160">
+            <h4>Reminders & Announcements</h4>
+            <p class="muted">Recurring reminders, scheduled announcements, per-channel control and smart mention settings.</p>
+          </div>
+          <div class="card reveal" data-delay="162">
+            <h4>Interactive Rooms</h4>
+            <p class="muted">Create focused study rooms, join with peers, and compete in friendly daily challenges.</p>
+          </div>
+          <div class="card reveal" data-delay="180">
+            <h4>Todos & Tasks</h4>
+            <p class="muted">Per-user todos, shared lists, deadlines and completion tracking with reminders.</p>
+          </div>
+          <div class="card reveal" data-delay="200">
+            <h4>Quizzes & Exams</h4>
+            <p class="muted">Timed quizzes, auto-grading, leaderboards, and JSON question banks for custom topics.</p>
+          </div>
+
+          <div class="card reveal" data-delay="220">
+            <h4>Games & Challenges</h4>
+            <p class="muted">Memory match, word scramble, math challenges, and daily study games.</p>
+          </div>
+          <div class="card reveal" data-delay="240">
+            <h4>Progress & XP</h4>
+            <p class="muted">Study streaks, XP, levels, ranks and personal progress dashboards.</p>
+          </div>
+          <div class="card reveal" data-delay="260">
+            <h4>Moderation</h4>
+            <p class="muted">Kick/ban, mute, warnings, verification flows and audit-friendly logging.</p>
+          </div>
+
+          <div class="card reveal" data-delay="280">
+            <h4>Auto-reply & Triggers</h4>
+            <p class="muted">Keyword replies, welcome messages, custom triggers and anti-spam hooks.</p>
+          </div>
+          <div class="card reveal" data-delay="300">
+            <h4>Media & Quotes</h4>
+            <p class="muted">Media hosting, scheduled media posts, quotes, study tips and shareable content.</p>
+          </div>
+          <div class="card reveal" data-delay="320">
+            <h4>Owner & Dev Tools</h4>
+            <p class="muted">Safe reload, config management, debug commands and modular cogs/plugin system.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sponsor (moved here for better flow) -->
+    <section id="sponsor" style="margin-top:18px">
+      <div class="sponsor reveal" data-delay="560" style="display:flex;align-items:center;gap:16px;padding:18px;border-radius:14px;">
+        <img src="https://i.postimg.cc/MHYsLfPz/Neon-Green-Circle-Frame-Fitness-You-Tube-Profile-Picturedurga-puja.png" alt="Deep Dey logo" style="width:72px;height:72px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.5)"/>
+        <div>
+          <strong style="display:block;font-size:1.05rem">Sponsored by Deep Dey - The FUTURE IITIAN 🎯</strong>
+          <div style="margin-top:6px;color:#BFD7FF;font-size:.95rem;line-height:1.5">
+            YouTube: <a href="https://www.youtube.com/channel/UCrh1Mx5CTTbbkgW5O6iS2Tw/" target="_blank">YouTube</a> •
+            Website: <a href="https://www.deepdeyiitk.com" target="_blank">Website</a> •
+            Instagram: <a href="https://www.instagram.com/deepdey.official/" target="_blank">@deepdey.official</a>
+            <div style="margin-top:6px">Discord: <a id="sponsor-discord" href="https://discord.com/users/828983708173598750" target="_blank">@deepdey.official</a> • Owner: <a id="owner-link" href="#owner" style="color:#fff;font-weight:800">Deep Dey</a></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Device preview toolbar removed: script detects devices automatically -->
+
+    <section id="howto">
+      <div class="reveal" data-delay="280">
+        <h3>Want to try?</h3>
+        <p class="muted">Because StudyBot is currently running inside a private server, the fastest way to test is to join the server below. If you want to self-host, clone the repo and follow <code>.env.example</code>.</p>
+        <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+          <a class="btn" href="https://discord.gg/tVzdXxKm2t" target="_blank" rel="noopener">Chat on Discord</a>
+          <a class="btn secondary" href="https://github.com/deepdeyiitgn/deepdey-discord_bot" target="_blank" rel="noopener">Clone repo</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- sponsor removed from here; will reinsert after FAQ for better flow -->
+
+    <!-- Commands Section -->
+    <section id="commands" style="margin-top:20px">
+      <div class="reveal" data-delay="320"><h3>Commands</h3></div>
+      <div class="grid" style="margin-top:12px">
+        <div class="card reveal" data-delay="340">
+          <h4>General Help</h4>
+          <p class="muted"><code>!help</code> or <code>/help</code> — Show help and list available cogs and commands.</p>
+        </div>
+        <div class="card reveal" data-delay="360">
+          <h4>Reminders</h4>
+          <p class="muted"><code>!remindme 2h Take a break</code> — Set a personal reminder. Use <code>!reminders</code> to list.</p>
+        </div>
+        <div class="card reveal" data-delay="380">
+          <h4>Todos</h4>
+          <p class="muted"><code>!todo add Finish chapter 3</code>, <code>!todo list</code>, <code>!todo done 1</code></p>
+        </div>
+
+        <div class="card reveal" data-delay="400">
+          <h4>Quizzes</h4>
+          <p class="muted"><code>!quiz start maths</code> — Start a quiz; use <code>!quiz stop</code> to end.</p>
+        </div>
+        <div class="card reveal" data-delay="420">
+          <h4>Games</h4>
+          <p class="muted"><code>!match</code>, <code>!scramble</code> — play instant word/memory games.</p>
+        </div>
+        <div class="card reveal" data-delay="440">
+          <h4>Admin</h4>
+          <p class="muted"><code>!kick @user</code>, <code>!ban @user</code>, <code>!verify</code>.</p>
+        </div>
+      </div>
+      <div class="muted" style="margin-top:12px">For full command list and usage, use <code>!help</code> in the server or check the repository docs.</div>
+    </section>
+
+    <!-- Build section -->
+    <section id="build" style="margin-top:20px">
+      <div class="reveal" data-delay="460"><h3>Build your own bot</h3></div>
+      <div class="card reveal" data-delay="480" style="margin-top:12px">
+        <h4>How to make a bot like StudyBot</h4>
+        <p class="muted">1) Clone the repo. 2) Create a virtualenv and install requirements. 3) Create a bot application and add token to .env. 4) Configure cogs you need and run the bot. The bot is modular using cogs so you can enable/disable features easily.</p>
+        <p class="muted">Why this approach is best: modular cogs keep code organized, allow incremental deployment and make maintenance easier. The bot uses standard libraries (discord.py) and stores data in JSON/SQLite for portability.</p>
+      </div>
+    </section>
+
+    <!-- FAQ section -->
+    <section id="faq" style="margin-top:20px">
+      <div class="reveal" data-delay="500"><h3>FAQ</h3></div>
+      <div style="margin-top:12px">
+        <div class="card reveal" data-delay="520">
+          <h4>Q: How do I invite the bot?</h4>
+          <p class="muted">A: The bot runs in a private server. Use the Join button above to join the official server where the bot lives.</p>
+        </div>
+        <div class="card reveal" data-delay="540" style="margin-top:8px">
+          <h4>Q: Can I self-host?</h4>
+          <p class="muted">A: Yes — clone the repo, follow the README, set up a Discord application and token, and run the bot with Python.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Form Section -->
+    <section id="contact" class="section contact-form-section" style="margin-top:20px">
+      <div class="form-container">
+        <form id="contactForm" class="contact-form">
+          
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" placeholder="Your Name" required>
+
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="Your Email" required>
+
+          <label for="phone">WhatsApp Number (Optional)</label>
+          <input type="tel" id="phone" name="phone" placeholder="Your WhatsApp Number">
+
+          <label for="subject">Subject</label>
+          <input type="text" id="subject" name="subject" placeholder="Subject" required>
+
+          <label for="message">Message</label>
+          <textarea id="message" name="message" placeholder="Write your message here" rows="6" required></textarea>
+
+          <button type="submit" class="btn">Send Message</button>
+        </form>
+      </div>
+    </section>
+
+    <script>
+      document.getElementById("contactForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        const phone = document.getElementById("phone").value || "Not Provided";
+        const subject = document.getElementById("subject").value;
+        const userMessage = document.getElementById("message").value;
+
+        // Default mail body
+        const defaultMessage = `
+Hello,
+
+I hope this message finds you well. I am reaching out regarding the subject "${subject}". Please find the details below.
+
+${userMessage}
+
+I would be glad to hear back from you at your convenience. Your response will mean a lot, and I truly appreciate your time.
+
+Best Regards,  
+Name   : ${name}  
+Email  : ${email}  
+Phone  : ${phone}
+        `;
+
+        const mailtoLink = `mailto:thedeeparise@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(defaultMessage)}`;
+
+        window.location.href = mailtoLink;
+      });
+    </script>
+
+    <footer class="reveal" data-delay="320">
+      <div class="footer-main">
+        <div class="footer-brand">
+          <div class="footer-logo"><img src="https://i.postimg.cc/MHYsLfPz/Neon-Green-Circle-Frame-Fitness-You-Tube-Profile-Picturedurga-puja.png" alt="StudyBot Logo" /></div>
+          <div>
+            <div class="footer-title">StudyBot <span class="footer-year">© 2025</span></div>
+            <div class="footer-tagline">Your Study Companion — Built for students, by students.</div>
+          </div>
+        </div>
+        <div class="footer-social">
+          <a href="https://discord.gg/tVzdXxKm2t" target="_blank" title="Discord" class="footer-icon"><img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg" alt="Discord" /></a>
+          <a href="https://github.com/deepdeyiitgn/deepdey-discord_bot" target="_blank" title="GitHub" class="footer-icon"><img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/github.svg" alt="GitHub" /></a>
+          <a href="https://www.deepdeyiitk.com" target="_blank" title="Website" class="footer-icon"><img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/internetarchive.svg" alt="Website" /></a>
+          <a href="https://instagram.com/deepdey.official" target="_blank" title="Instagram" class="footer-icon"><img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/instagram.svg" alt="Instagram" /></a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span class="footer-credit">Made with <span style="color:#ff5f1f">❤️</span> for students • <a href="404.html" class="footer-link">🎮 Play Games Hub</a></span>
+        <button id="back-to-top" class="btn secondary" title="Back to top">↑ Top</button>
+      </div>
+    </footer>
+<style>
+  .footer-main {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    padding: 24px 0 0 0;
+    border-top: 2px solid rgba(255,255,255,0.07);
+    background: linear-gradient(90deg,#0f172a 60%,#1a2a3a 100%);
+  }
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .footer-logo img {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    box-shadow: 0 2px 12px #00ff99a0;
+    background: #fff;
+  }
+  .footer-title {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #fff;
+    letter-spacing: 1px;
+  }
+  .footer-year {
+    color: #00ff99;
+    font-size: 1rem;
+    margin-left: 6px;
+  }
+  .footer-tagline {
+    color: #BFD7FF;
+    font-size: .98rem;
+    margin-top: 2px;
+  }
+  .footer-social {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+  .footer-icon img {
+    width: 32px;
+    height: 32px;
+    filter: grayscale(0.2) brightness(1.2) drop-shadow(0 2px 8px #00ff9950);
+    transition: transform 0.2s, filter 0.2s;
+    border-radius: 8px;
+    background: #fff;
+    padding: 3px;
+  }
+  .footer-icon img:hover {
+    transform: scale(1.13) rotate(-6deg);
+    filter: drop-shadow(0 4px 16px #00ff99a0) brightness(1.3);
+  }
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+    font-size: 1rem;
+    color: #BFD7FF;
+  }
+  .footer-credit {
+    font-size: .98rem;
+    color: #BFD7FF;
+  }
+  .footer-link {
+    color: #00ff99;
+    font-weight: 600;
+    text-decoration: underline;
+    margin-left: 6px;
+  }
+  @media (max-width: 700px) {
+    .footer-main, .footer-bottom {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .footer-social {
+      gap: 10px;
+    }
+    .footer-logo img {
+      width: 44px; height: 44px;
+    }
+  }
+</style>
+  </div>
+
+  <!-- Festive Popup (user-provided code integrated) -->
+  <!-- Navaratri & Dussehra Popup | Dates: 22 Sept 2025 – 2 Oct 2025 -->
+  <div id="festive-popup-container">
+    <div id="festive-popup-overlay">
+      <div id="festive-popup">
+  <button id="close-popup-btn" title="Close" aria-label="Close popup">&times;</button>
+        <h2 id="popup-title"></h2>
+        <p id="popup-message"></p>
+        <div id="countdown-timer"></div>
+        <div id="stopwatch" style="display:none;"></div>
+        <div class="popup-buttons">
+          <button class="popup-btn" id="generate-flowers-btn">🌸 Shower Flowers</button>
+          <button class="popup-btn" id="get-blessed-btn">🙏 Receive Blessings</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="blessing-popup-overlay">
+      <div id="blessing-popup">
+        <h3 id="blessing-title"></h3>
+        <p id="blessing-message"></p>
+        <button class="popup-btn" id="close-blessing-btn" aria-label="Close blessing popup">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* Scroll reveal (simple) with per-element data-delay support */
+    (function(){
+      // reveal elements with optional data-delay (ms)
+      const revealEls = document.querySelectorAll('.reveal');
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if(e.isIntersecting){
+            const delay = parseInt(e.target.dataset.delay) || 0;
+            setTimeout(() => {
+              e.target.classList.add('visible');
+              const card = e.target.querySelector('.card') || e.target;
+              if(card) card.classList.add('revealed');
+            }, delay);
+            io.unobserve(e.target);
+          }
+        });
+      }, {threshold:0.12});
+      revealEls.forEach(el => io.observe(el));
+    })();
+
+    // Small UI helpers: hamburger menu, owner animation, demo buttons
+    (function(){
+      const hamb = document.getElementById('hamburger');
+      const navLinks = document.getElementById('nav-links');
+      if(hamb && navLinks){
+        hamb.addEventListener('click', ()=> navLinks.classList.toggle('show'));
+      }
+
+      // Owner name animation toggle on hover/click
+      const ownerAnim = document.getElementById('owner-anim');
+      const ownerLink = document.getElementById('owner-link');
+      if(ownerAnim){
+        ownerAnim.classList.add('pulse');
+        ownerAnim.addEventListener('click', ()=>{
+          ownerAnim.classList.toggle('pulse');
+        });
+      }
+      if(ownerLink){
+        ownerLink.addEventListener('mouseenter', ()=> ownerAnim && ownerAnim.classList.add('pulse'));
+        ownerLink.addEventListener('mouseleave', ()=> ownerAnim && ownerAnim.classList.remove('pulse'));
+      }
+
+      // Toast helper
+      function showToast(text){
+        const t = document.createElement('div');
+        t.textContent = text;
+        t.style.position = 'fixed';
+        t.style.bottom = '22px';
+        t.style.right = '22px';
+        t.style.padding = '12px 18px';
+        t.style.background = 'linear-gradient(90deg,#1E90FF,#2E8B57)';
+        t.style.color = '#fff';
+        t.style.borderRadius = '12px';
+        t.style.boxShadow = '0 8px 30px rgba(0,0,0,.5)';
+        t.style.zIndex = 120000;
+        document.body.appendChild(t);
+        setTimeout(()=> t.style.opacity = '0', 2400);
+        setTimeout(()=> t.remove(), 3000);
+      }
+
+      const tryQuiz = document.getElementById('try-quiz');
+      const tryTodo = document.getElementById('try-todo');
+      if(tryQuiz) tryQuiz.addEventListener('click', ()=> showToast('Open Discord and run /quiz start in the server.'));
+      if(tryTodo) tryTodo.addEventListener('click', ()=> showToast('Try: !todo add Read chapter 2 — check server chat.'));
+
+      // small emoji animation: add discord-like animated emoji next to Discord CTAs
+      const discordCTAs = document.querySelectorAll('a[href*="discord.gg"], a[href*="discord.com"]');
+      discordCTAs.forEach(a=>{
+        const span = document.createElement('span');
+        span.className = 'emoji-animated sparkle';
+        span.textContent = '💬';
+        span.style.marginLeft = '8px';
+        a.appendChild(span);
+      });
+
+      // Accessibility: update hamburger aria-expanded
+      if(hamb){
+        hamb.setAttribute('aria-expanded', 'false');
+        hamb.addEventListener('click', ()=>{
+          const expanded = hamb.getAttribute('aria-expanded') === 'true';
+          hamb.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+        });
+      }
+
+      // Back to top
+      const back = document.getElementById('back-to-top');
+      if(back){ back.addEventListener('click', ()=> window.scrollTo({top:0,behavior:'smooth'})); }
+    })();
+
+    /* Typing accent in hero (subtle loop) */
+    (function(){
+      const words = ['StudyBot','Focus Engine','Quiz Master','Revision Buddy'];
+      const el = document.querySelector('.typing');
+      let i=0, j=0, forward=true;
+      function tick(){
+        const w = words[i];
+        if(forward){ j++; if(j> w.length){ forward=false; setTimeout(tick,900); return } }
+        else { j--; if(j<0){ forward=true; i=(i+1)%words.length; setTimeout(tick,300); return } }
+        el.textContent = w.slice(0,j);
+        setTimeout(tick,120);
+      }
+      tick();
+    })();
+
+    /* Popup code (adapted from provided script) */
+    (function(){
+      // festiveData as provided (kept smaller for brevity, but uses user's mapping)
+      const festiveData = {
+        '2025-09-23': { day: 1, title: 'Happy Navaratri! Day 1', message: 'May the divine grace of Maa Shailaputri bring you strength. Shower blessings.', blessing: 'On Day 1, we worship Maa Shailaputri.', image: 'https://images.pexels.com/photos/17585093/pexels-photo-17585093.jpeg' },
+        '2025-09-24': { day: 2, title: 'Shubh Navaratri! Day 2', message: 'May Maa Brahmacharini guide your spirit.', blessing: 'Maa Brahmacharini represents asceticism and devotion.', image: 'https://images.pexels.com/photos/17585093/pexels-photo-17585093.jpeg' },
+        '2025-09-25': { day: 3, title: 'Joyous Navaratri! Day 3', message: 'May the glow of Maa Chandraghanta fill your life with courage.', blessing: 'Maa Chandraghanta is the symbol of bravery.', image: 'https://images.pexels.com/photos/17585093/pexels-photo-17585093.jpeg' },
+        '2025-09-26': { day: 4, title: 'Happy Navaratri! Day 4', message: 'Creative energy of Maa Kushmanda bless your world.', blessing: 'Maa Kushmanda bestows health and abundance.', image: 'https://images.pexels.com/photos/17585093/pexels-photo-17585093.jpeg' },
+        '2025-09-27': { day: 5, title: 'Blessed Navaratri! Day 5', message: 'Feel the warmth of Maa Skandamata\'s love.', blessing: 'Skandamata symbolizes selfless love.', image: 'https://images.pexels.com/photos/17585093/pexels-photo-17585093.jpeg' },
+        '2025-09-28': { day: 6, title: 'Divine Navaratri! Day 6', message: 'May Maa Katyayani empower you to conquer challenges.', blessing: 'Maa Katyayani grants strength to overcome obstacles.', image: 'https://images.pexels.com/photos/17585093/pexels-photo-17585093.jpeg' },
+        '2025-09-29': { day: 7, title: 'Shubho Maha Saptami!', message: 'Wishing you a vibrant start to Durga Puja celebrations!', blessing: 'Maha Saptami marks the formal beginning of Durga Puja.', image: 'https://images.pexels.com/photos/17585116/pexels-photo-17585116.jpeg' },
+        '2025-09-30': { day: 8, title: 'Shubho Maha Ashtami!', message: 'May Maa Durga bless you with strength and fortitude.', blessing: 'Maha Ashtami celebrates Maa Durga\'s victory over evil.', image: 'https://images.pexels.com/photos/17585116/pexels-photo-17585116.jpeg' },
+        '2025-10-01': { day: 9, title: 'Shubho Maha Navami!', message: 'May all your prayers be answered and life filled with prosperity.', blessing: 'Maha Navami celebrates final victory of the Goddess.', image: 'https://images.pexels.com/photos/17585116/pexels-photo-17585116.jpeg' },
+        '2025-10-02': { day: 10, title: 'Happy Vijayadashami!', message: 'Victory of good over evil — Shubho Bijoya!', blessing: 'Vijayadashami celebrates triumph and new beginnings.', image: 'https://images.pexels.com/photos/17585116/pexels-photo-17585116.jpeg' }
+      };
+      const postDussehraDate = new Date('2025-10-02T00:00:00');
+
+      const popupOverlay = document.getElementById('festive-popup-overlay');
+      const popup = document.getElementById('festive-popup');
+      const closeBtn = document.getElementById('close-popup-btn');
+      const titleEl = document.getElementById('popup-title');
+      const messageEl = document.getElementById('popup-message');
+      const countdownEl = document.getElementById('countdown-timer');
+      const stopwatchEl = document.getElementById('stopwatch');
+      const flowersBtn = document.getElementById('generate-flowers-btn');
+      const blessedBtn = document.getElementById('get-blessed-btn');
+      const blessingOverlay = document.getElementById('blessing-popup-overlay');
+      const blessingTitle = document.getElementById('blessing-title');
+      const blessingMessage = document.getElementById('blessing-message');
+      const closeBlessingBtn = document.getElementById('close-blessing-btn');
+
+      let intervalId;
+      const today = new Date();
+      const todayString = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+      const currentData = festiveData[todayString];
+
+      function showMainPopup() {
+        // Show popup only once per session (sessionStorage), respects festiveData and postDussehraDate
+        try {
+          if (sessionStorage.getItem('festivePopupShown')) return;
+        } catch (e) {
+          // If sessionStorage is unavailable, fall back to showing popup
+        }
+
+        if (currentData) {
+          setupPopupContent(currentData);
+          popupOverlay.style.display = 'flex';
+          startCountdown();
+        } else if (today >= postDussehraDate) {
+          setupStopwatchPopup();
+          popupOverlay.style.display = 'flex';
+          startStopwatch();
+        }
+
+        try { sessionStorage.setItem('festivePopupShown', '1'); } catch(e){}
+      }
+      function setupPopupContent(data) {
+        titleEl.textContent = data.title;
+        messageEl.textContent = data.message;
+        popup.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url('${data.image}')`;
+        blessedBtn.style.display = 'inline-flex';
+        countdownEl.style.display = 'inline-block';
+        stopwatchEl.style.display = 'none';
+      }
+      function setupStopwatchPopup() {
+        titleEl.textContent = 'It will happen again next year! 🌸';
+        messageEl.textContent = '✨ Victory of Good Over Evil, Light Over Darkness, and Love Over Hatred. May this Vijaya Dashami remind us that every ending carries the seed of a new beginning — every goodbye, a promise of return.';
+        popup.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url('https://i.postimg.cc/Y9CkRzsq/65155711dce8135d31068666-1695897361989.jpg')`;
+        blessedBtn.style.display = 'none';
+        countdownEl.style.display = 'none';
+        stopwatchEl.style.display = 'inline-block';
+      }
+      function closeMainPopup() {
+        popup.style.animation = 'zoomOut 0.4s forwards';
+        setTimeout(() => {
+          popupOverlay.style.display = 'none';
+          popup.style.animation = 'zoomIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+        }, 400);
+      }
+      function startCountdown() {
+        if(intervalId) clearInterval(intervalId);
+        intervalId = setInterval(() => {
+          const now = new Date();
+          const nextDay = new Date(now);
+          nextDay.setDate(now.getDate() + 1);
+          nextDay.setHours(0,0,0,0);
+          const diff = nextDay - now;
+          const h = Math.floor(diff / (1000*60*60));
+          const m = Math.floor((diff % (1000*60*60)) / (1000*60));
+          const s = Math.floor((diff % (1000*60)) / 1000);
+          countdownEl.innerHTML = `Next day begins in: ${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`;
+        },1000);
+      }
+      function startStopwatch() {
+        if(intervalId) clearInterval(intervalId);
+        intervalId = setInterval(() => {
+          const diff = new Date() - postDussehraDate;
+          const d = Math.floor(diff / (1000*60*60*24));
+          const h = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+          const m = Math.floor((diff % (1000*60*60)) / (1000*60));
+          const s = Math.floor((diff % (1000*60)) / 1000);
+          stopwatchEl.innerHTML = `Time since Dussehra: ${d}d ${h}h ${m}m ${s}s`;
+        },1000);
+      }
+      flowersBtn.addEventListener('click', () => {
+        for (let i = 0; i < 30; i++) {
+          const petal = document.createElement('div');
+          petal.className = 'flower-petal';
+          petal.style.left = Math.random() * 100 + 'vw';
+          petal.style.animationDuration = Math.random() * 3 + 4 + 's';
+          petal.style.animationDelay = Math.random() * 2 + 's';
+          petal.style.backgroundColor = `hsl(${Math.random() * 60 + 300}, 100%, 70%)`;
+          petal.style.transform = `rotate(${Math.random() * 360}deg)`;
+          document.body.appendChild(petal);
+          setTimeout(() => petal.remove(), 7000);
+        }
+      });
+      blessedBtn.addEventListener('click', () => {
+        if (currentData) {
+            blessingTitle.textContent = currentData.title;
+            blessingMessage.textContent = currentData.blessing;
+            blessingOverlay.style.display = 'flex';
+        }
+      });
+      closeBtn.addEventListener('click', closeMainPopup);
+      closeBlessingBtn.addEventListener('click', () => blessingOverlay.style.display = 'none');
+      showMainPopup();
+    })();
+  </script>
+
+  <style>
+    /* popup CSS extracted for scope */
+    @import url('https://fonts.googleapis.com/css2?family=Lobster&family=Poppins:wght@400;600&display=swap');
+    #festive-popup-overlay, #blessing-popup-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.75); z-index:99999; display:none; justify-content:center; align-items:center; padding:15px; box-sizing:border-box; }
+    #festive-popup, #blessing-popup { position:relative; background-size:cover; background-position:center; padding:30px 40px; border-radius:20px; text-align:center; color:white; font-family:'Poppins',sans-serif; max-width:95%; width:600px; box-shadow:0 10px 40px rgba(255,152,0,0.5); border:2px solid #ff9800; }
+    #blessing-popup { background:#fff; color:#333 }
+    #festive-popup h2 { font-family:'Lobster',cursive; font-size:clamp(2rem,6vw,2.4rem); margin-bottom:15px; color:#FFD700; text-shadow:3px 3px 12px rgba(0,0,0,.7) }
+    #festive-popup p { font-size:1.05rem; margin-bottom:12px }
+    #countdown-timer, #stopwatch { font-size:1.1rem; font-weight:600; margin-top:14px; background:rgba(0,0,0,0.6); padding:10px; border-radius:10px; display:inline-block }
+    .popup-buttons{margin-top:18px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+    .popup-btn{background:linear-gradient(45deg,#ff9800,#f57c00);color:white;border:none;padding:10px 18px;border-radius:50px;cursor:pointer;font-weight:700}
+    #close-popup-btn{position:absolute;top:10px;right:15px;background:transparent;border:none;color:white;font-size:2rem;cursor:pointer}
+    .flower-petal{position:fixed;top:-20px;width:14px;height:14px;border-radius:50% 0;animation:fall linear infinite;z-index:100000}
+    @keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+  </style>
+  <style>
+    /* Device preview helper styles */
+    #device-preview-wrapper { transition: width 320ms ease, height 320ms ease; margin:0 auto }
+    @media (max-width:640px){ .wrap{padding:14px} .brand h1{font-size:1rem} }
+    /* Smooth toggle reduces heavy box-shadows/animations for low-end devices */
+    .reduced-motion * { animation: none !important; transition: none !important }
+  </style>
+
+  <script>
+    // Anti-inspect: disable right-click + common developer shortcuts, but allow F11 and normal left-clicks
+    (function(){
+      // block context menu
+      window.addEventListener('contextmenu', function(e){ e.preventDefault(); }, {passive:false});
+
+      // block common devtools shortcuts: F12, Ctrl+Shift+I, Ctrl+Shift+C, Ctrl+Shift+J, Ctrl+U
+      window.addEventListener('keydown', function(e){
+        // Allow F11 (fullscreen) and simple navigation keys
+        if (e.key === 'F11') return;
+        // Ctrl/Meta+U (view-source) or Ctrl+Shift+I / J / C or F12
+        const isMac = navigator.platform.toUpperCase().indexOf('MAC')>=0;
+        const macMeta = isMac && e.metaKey; // Cmd key on mac
+        if (e.key === 'F12' || (e.ctrlKey && e.key.toLowerCase()==='u') || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key.toUpperCase())) || (macMeta && e.key.toLowerCase()==='u')){
+          e.preventDefault(); e.stopPropagation();
+        }
+      }, true);
+
+      // discourage opening devtools via mouse double-click selecting source
+      document.addEventListener('mousedown', function(e){
+        // only allow left-clicks normally
+        if (e.button !== 0) { e.preventDefault(); }
+      }, {passive:false});
+    })();
+
+    // Smooth toggle in header (accessibility/performance control)
+    (function(){
+      const btn = document.getElementById('toggle-smooth-header');
+      let reduced = false;
+      btn.addEventListener('click', () => {
+        reduced = !reduced;
+        if (reduced) document.body.classList.add('reduced-motion'); else document.body.classList.remove('reduced-motion');
+        btn.textContent = reduced ? 'Performance' : 'Smooth';
+      });
+    })();
+    
+    // Device detection: add body classes (device-phone / device-tablet / device-desktop / device-tv)
+    (function(){
+      const ua = navigator.userAgent || '';
+      const body = document.body;
+      const root = document.documentElement;
+
+      function applyDevice(d){
+        body.classList.remove('device-phone','device-tablet','device-desktop','device-tv');
+        body.classList.add('device-'+d);
+        // set CSS variable for max width so .wrap picks it up
+        if(d === 'phone'){
+          root.style.setProperty('--maxw','420px');
+          root.style.fontSize = '14px';
+        } else if(d === 'tablet'){
+          root.style.setProperty('--maxw','820px');
+          root.style.fontSize = '15px';
+        } else if(d === 'tv'){
+          root.style.setProperty('--maxw','1800px');
+          root.style.fontSize = '18px';
+        } else {
+          root.style.setProperty('--maxw','1100px');
+          root.style.fontSize = '';
+        }
+      }
+
+      function detect(){
+        const w = Math.max(window.innerWidth, screen.width || 0);
+        let device = 'desktop';
+        if(/Mobi|Android|iPhone|iPad|iPod|Windows Phone/i.test(ua) || w <= 480) device = 'phone';
+        else if((w > 480 && w <= 1024) || /Tablet|iPad/i.test(ua)) device = 'tablet';
+        else if(w >= 1600) device = 'tv';
+        else device = 'desktop';
+        applyDevice(device);
+      }
+
+      detect();
+      // react on resize/orientation change
+      let resizeTimer;
+      window.addEventListener('resize', function(){
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(detect, 150);
+      });
+    })();
+  </script>
+</body>
+</html>

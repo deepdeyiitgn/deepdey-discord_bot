@@ -1,4 +1,21 @@
-"""Admin cog: kick, ban, unban, role management with UI confirmation
+"""Admin module for moderation commands"""
+import discord
+from discord.ext import commands
+from discord import app_commands
+import logging
+import sys
+import datetime
+
+# Configure logging with UTF-8 encoding
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout),
+        logging.FileHandler('logs/mod_actions.log', 'a', encoding='utf-8')
+    ]
+)
+logger = logging.getLogger('admin')
 
 Commands are available in both prefix (!) and slash (/) versions.
 All admin commands require appropriate permissions.

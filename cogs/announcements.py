@@ -21,6 +21,11 @@ ANNOUNCEMENTS_DIR = Path(__file__).parent.parent / 'announcements'
 
 
 class Announcements(commands.Cog):
+
+    async def announcement_file_autocomplete(self, interaction: discord.Interaction, current: str):
+        # Suggest .txt files in the announcements folder
+        files = [f.stem for f in ANNOUNCEMENTS_DIR.glob('*.txt')]
+        return [app_commands.Choice(name=f, value=f) for f in files if current.lower() in f.lower()][:25]
     """Cog to manage scheduled announcements"""
 
     def __init__(self, bot: commands.Bot):
@@ -204,7 +209,8 @@ class Announcements(commands.Cog):
         title='Optional custom title',
         color='Optional color (e.g. RED, BLUE, GREEN)'
     )
-    @commands.has_permissions(administrator=True) 
+    @app_commands.autocomplete(filename=announcement_file_autocomplete)
+    @commands.has_permissions(administrator=True)
     async def announce_file(self, ctx, channel: discord.TextChannel, filename: str, title: str = None, color: str = None):
         """Send the contents of an announcement file to the specified channel"""
         file_path = ANNOUNCEMENTS_DIR / f"{filename}.txt"

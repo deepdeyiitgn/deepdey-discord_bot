@@ -41,6 +41,10 @@ MEDIA_ROOT = Path(__file__).parent.parent / 'media'
 
 
 class MediaManager(commands.Cog):
+
+    async def media_file_autocomplete(self, interaction: discord.Interaction, current: str):
+        files = await self._list_files()
+        return [app_commands.Choice(name=f, value=f) for f in files if current.lower() in f.lower()][:25]
     """Cog to manage media files stored in a `media/` folder."""
 
     def __init__(self, bot: commands.Bot):
@@ -174,6 +178,7 @@ class MediaManager(commands.Cog):
         filename='Relative file path inside media/',
         channel='Target channel to send the file to'
     )
+    @app_commands.autocomplete(filename=media_file_autocomplete)
     @commands.has_permissions(manage_guild=True)
     async def sendfile(self, ctx, filename: str, channel: discord.TextChannel):
         """Send a file from the media folder to a specific channel (Admin only)"""

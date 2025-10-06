@@ -14,6 +14,7 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 from utils.chat_logger import ChatLogger
+from utils.mod_logger import ModLogger
 
 
 BASE_DIR = Path(__file__).parent
@@ -39,18 +40,83 @@ class StudyBot(commands.Bot):
         self.start_time = None
         self.bg_task = None
         self.chat_logger = ChatLogger()
+        self.mod_logger = ModLogger()
 
     async def setup_hook(self):
         # Called after the bot is logged in but before connect finishes; good for setup
         await load_cogs()
         try:
             print('Syncing application (slash) commands...')
-            await self.tree.sync()
-            print('Slash commands synced.')
+            # This will sync all loaded slash/hybrid commands to Discord
+            synced = await self.tree.sync()
+            print(f'Slash commands synced: {len(synced)} commands')
+            
+            # Force sync for each guild to ensure all commands are available
+            for guild in self.guilds:
+                try:
+                    await self.tree.sync(guild=guild)
+                except Exception as e:
+                    print(f'Error syncing commands for guild {guild.id}: {e}')
+            
+            print('Guild-specific command sync complete.')
         except Exception as e:
-            print('Failed to sync app commands in setup_hook:', e)
-
-        # Start background task for ping/uptime updates
+            print(f'Error in setup: {e}')
+            
+    async def on_message(self, message):
+        # Log all messages
+        if not message.author.bot:
+            # Log user message
+            self.chat_logger.log_message(
+                message.author.name,
+                message.content,
+                message.channel,
+                message.guild
+            )
+        elif message.author == self.user:
+            # Log bot's own messages
+            self.chat_logger.log_message(
+                self.user.name,
+                message.content,
+                message.channel,
+                message.guild,
+                is_bot=True
+            )
+        
+        await super().on_message(message)
+        
+    async def on_member_ban(self, guild, user):
+        # Log member bans
+        async for entry in guild.audit_logs(limit=1, action=discord.AuditLogAction.ban):
+            self.mod_logger.log_action(
+                entry.user.name,
+                "ban",
+                user.name,
+                entry.reason
+            )
+            
+    async def on_member_kick(self, guild, user):
+        # Log member kicks
+        async for entry in guild.audit_logs(limit=1, action=discord.AuditLogAction.kick):
+            self.mod_logger.log_action(
+                entry.user.name,
+                "kick",
+                user.name,
+                entry.reason
+            )
+            
+    async def on_member_timeout(self, guild, user):
+        # Log member timeouts
+        try:
+            async for entry in guild.audit_logs(limit=1, action=discord.AuditLogAction.member_update):
+                if entry.target == user and entry.changes.timeout:
+                    self.mod_logger.log_action(
+                        entry.user.name,
+                        "timeout",
+                        user.name,
+                        entry.reason
+                    )
+        except Exception as e:
+            print(f'Error logging timeout: {e}')
         if not self.bg_task:
             self.bg_task = self.loop.create_task(self.status_update_task())
 
@@ -59,6 +125,9 @@ class StudyBot(commands.Bot):
         print(f'Using prefix: !')
         print('--------------------')
         self.start_time = time.time()  # Set the start time when bot becomes ready
+        # Always start the status update task when the bot is ready
+        if not self.bg_task:
+            self.bg_task = self.loop.create_task(self.status_update_task())
 
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.CommandNotFound):

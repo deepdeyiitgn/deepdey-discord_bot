@@ -50,8 +50,10 @@ class Quotes(commands.Cog):
         except Exception:
             pass
 
-    @commands.command(name='addquote')
+    @commands.hybrid_command(name='addquote', description='Add a quote to the quote bank')
+    @app_commands.describe(quote="The quote to add")
     async def add_quote(self, ctx, *, quote: str):
+        """Add a quote to the quote bank"""
         data = await async_load_json(DATA_PATH, default=self.data)
         data.setdefault('quotes', []).append(quote)
         await async_save_json(DATA_PATH, data)

@@ -1,20 +1,22 @@
 {
   "leaderboard": {
-    "828983708173598750": 20,
+    "828983708173598750": 23,
     "1113029993992302625": 18,
-    "1423643764202934405": 4
+    "1423643764202934405": 6
   },
   "game_scores": {
     "828983708173598750": {
-      "math-challenge": 92,
+      "math-challenge": 94,
       "typing-speed": 51,
-      "emoji-quiz": 100,
-      "guess-number": 57
+      "emoji-quiz": 200,
+      "guess-number": 57,
+      "rps": 150
     },
     "1423643764202934405": {
       "emoji-quiz": 100,
-      "math-challenge": 73,
-      "typing-speed": 38
+      "math-challenge": 133,
+      "typing-speed": 269,
+      "guess-number": 42
     }
   },
   "quiz_stats": {
@@ -26,12 +28,19 @@
           "total_time": 29.521221160888672,
           "avg_time": 2.952122116088867,
           "questions": 10
+        },
+        {
+          "timestamp": 1759685019.5261557,
+          "score": 8,
+          "total_time": 73.11112785339355,
+          "avg_time": 7.311112785339356,
+          "questions": 10
         }
       ],
-      "total_questions": 10,
-      "correct_answers": 4,
+      "total_questions": 20,
+      "correct_answers": 12,
       "fastest_answer": 2.129652500152588,
-      "accuracy": 40.0
+      "accuracy": 60.0
     },
     "1423643764202934405": {
       "quizzes": [
@@ -41,12 +50,19 @@
           "total_time": 77.86610817909241,
           "avg_time": 7.78661081790924,
           "questions": 10
+        },
+        {
+          "timestamp": 1759685461.833061,
+          "score": 9,
+          "total_time": 100.7132294178009,
+          "avg_time": 10.07132294178009,
+          "questions": 10
         }
       ],
-      "total_questions": 10,
-      "correct_answers": 8,
+      "total_questions": 20,
+      "correct_answers": 17,
       "fastest_answer": 4.267413854598999,
-      "accuracy": 80.0
+      "accuracy": 85.0
     }
   }
 }

@@ -19,17 +19,15 @@ class ChatLogger:
         if not self.current_log_file.exists():
             self.current_log_file.touch()
 
-    def log_message(self, author, content, channel=None, guild=None, message_type="MESSAGE"):
+    def log_message(self, author, content, channel=None, guild=None, message_type="MESSAGE", is_bot=False):
         """Log a chat message with timestamp and metadata"""
         timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        guild_name = guild.name if guild else "DM"
-        channel_name = channel.name if channel else "Direct Message"
         
-        log_entry = (
-            f"[{timestamp}] [{message_type}] "
-            f"[{guild_name}/{channel_name}] "
-            f"{author}: {content}\n"
-        )
+        # Format the message based on whether it's a user message or bot response
+        if is_bot:
+            log_entry = f"{author}: {content} {{{timestamp}}}\n"
+        else:
+            log_entry = f"{author}: {content} {{{timestamp}}}\n"
         
         # Check if we need to create a new log file (date changed)
         if not self.current_log_file.stem.endswith(datetime.datetime.now().strftime('%Y-%m-%d')):

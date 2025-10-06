@@ -265,33 +265,101 @@ class Games(commands.Cog):
         except asyncio.TimeoutError:
             await ctx.send(f"Time's up! The word was **{word}**")
             
+    def generate_math_question(self, difficulty):
+        """Generate a math question based on difficulty level"""
+        if difficulty == "easy":
+            num1 = random.randint(1, 20)
+            num2 = random.randint(1, 20)
+            op = random.choice(['+', '-', '*'])
+        elif difficulty == "medium":
+            num1 = random.randint(10, 50)
+            num2 = random.randint(10, 50)
+            op = random.choice(['+', '-', '*', '/'])
+            if op == '/':  # Ensure clean division
+                num1 = num2 * random.randint(1, 10)
+        elif difficulty == "hard":
+            if random.choice([True, False]):
+                # Complex arithmetic
+                num1 = random.randint(20, 100)
+                num2 = random.randint(20, 100)
+                op = random.choice(['+', '-', '*', '/'])
+                if op == '/':
+                    num1 = num2 * random.randint(1, 20)
+            else:
+                # Square/cube
+                num1 = random.randint(2, 20)
+                num2 = random.choice([2, 3])  # Square or cube
+                return f"{num1}^{num2} = ?", num1 ** num2
+        else:  # extreme
+            ops = random.randint(2, 3)  # 2-3 operations
+            nums = [random.randint(10, 50) for _ in range(ops + 1)]
+            operators = random.choices(['+', '-', '*'], k=ops)
+            question = str(nums[0])
+            expression = str(nums[0])
+            for i in range(ops):
+                question += f" {operators[i]} {nums[i+1]}"
+                expression += f" {operators[i]} {nums[i+1]}"
+            return f"{question} = ?", eval(expression)
+
+        # Generate basic question
+        question = f"{num1} {op} {num2} = ?"
+        if op == '/':
+            answer = num1 // num2  # Integer division
+        else:
+            answer = eval(f"{num1} {op} {num2}")
+        return question, answer
+
     @commands.hybrid_command(name='math-challenge', description='Solve math problems')
     async def math_challenge(self, ctx):
-        """Play a math challenge game"""
+        """Play a math challenge game with increasing difficulty"""
         correct = 0
         total_time = 0
         questions = []
         user_answers = []
         
-        await ctx.send("Math Challenge! You'll get 5 questions.")
-        await asyncio.sleep(1)
+        embed = discord.Embed(
+            title="🧮 Advanced Math Challenge",
+            description="Get ready for 20 questions of increasing difficulty!",
+            color=discord.Color.blue()
+        )
+        embed.add_field(
+            name="Difficulty Levels",
+            value="Questions 1-5: Easy\nQuestions 6-10: Medium\n"
+                  "Questions 11-15: Hard\nQuestions 16-20: Extreme",
+            inline=False
+        )
+        embed.add_field(
+            name="Scoring",
+            value="Easy: 3 points\nMedium: 5 points\n"
+                  "Hard: 8 points\nExtreme: 10 points",
+            inline=False
+        )
+        await ctx.send(embed=embed)
+        await asyncio.sleep(2)
         
-        for i in range(5):
-            num1 = random.randint(1, 20)
-            num2 = random.randint(1, 20)
-            op = random.choice(MATH_OPERATORS)
+        # Generate questions for each difficulty
+        difficulties = ['easy'] * 5 + ['medium'] * 5 + ['hard'] * 5 + ['extreme'] * 5
+        points = {'easy': 3, 'medium': 5, 'hard': 8, 'extreme': 10}
+        total_points = 0
+        
+        for i, difficulty in enumerate(difficulties, 1):
+            question, answer = self.generate_math_question(difficulty)
+            questions.append((question, answer, difficulty))
             
-            question = f"{num1} {op} {num2} = ?"
-            answer = eval(f"{num1} {op} {num2}")
-            questions.append((question, answer))
-            
-            await ctx.send(f"Question {i+1}: {question}")
+            # Create question embed
+            q_embed = discord.Embed(
+                title=f"Question {i}/20 - {difficulty.upper()}",
+                description=question,
+                color=discord.Color.green()
+            )
+            q_embed.set_footer(text=f"Worth {points[difficulty]} points | Time limit: 30 seconds")
+            await ctx.send(embed=q_embed)
             
             try:
                 start_time = time.time()
                 msg = await self.bot.wait_for('message', 
                     check=lambda m: m.author == ctx.author and m.channel == ctx.channel,
-                    timeout=20
+                    timeout=30
                 )
                 
                 duration = time.time() - start_time
@@ -302,7 +370,8 @@ class Games(commands.Cog):
                     user_answers.append(user_answer)
                     if user_answer == answer:
                         correct += 1
-                        await ctx.send("✅ Correct!")
+                        total_points += points[difficulty]
+                        await ctx.send(f"✅ Correct! +{points[difficulty]} points")
                     else:
                         await ctx.send(f"❌ Wrong! The answer was {answer}")
                 except ValueError:
@@ -310,28 +379,49 @@ class Games(commands.Cog):
                     user_answers.append(None)
                     
             except asyncio.TimeoutError:
-                await ctx.send(f"Time's up! The answer was {answer}")
+                await ctx.send(f"⏰ Time's up! The answer was {answer}")
                 user_answers.append(None)
                 
-        # Calculate score based on correctness and speed
-        avg_time = total_time / 5 if total_time > 0 else 20
-        score = int((correct / 5) * 100 - avg_time)
-        score = max(0, score)
+        # Calculate final results
+        avg_time = total_time / 20 if total_time > 0 else 30
         
-        await self.update_score(ctx.author.id, 'math-challenge', score)
+        # Create results embed
+        embed = discord.Embed(
+            title="🏆 Math Challenge Results",
+            description=f"Total Points: **{total_points}**",
+            color=discord.Color.blue()
+        )
         
-        # Show detailed results
-        embed = discord.Embed(title="Math Challenge Results", color=discord.Color.blue())
-        embed.add_field(name="Score", value=str(score), inline=True)
-        embed.add_field(name="Correct", value=f"{correct}/5", inline=True)
-        embed.add_field(name="Avg Time", value=f"{avg_time:.1f}s", inline=True)
+        # Add stats per difficulty
+        for diff in ['easy', 'medium', 'hard', 'extreme']:
+            diff_questions = [(q, a, u) for (q, a, d), u in zip(questions, user_answers) if d == diff]
+            correct_diff = sum(1 for _, a, u in diff_questions if u == a)
+            embed.add_field(
+                name=f"{diff.title()} Level",
+                value=f"Correct: {correct_diff}/5\nPoints: {correct_diff * points[diff]}/{5 * points[diff]}",
+                inline=True
+            )
         
-        # Show question review
-        review = []
-        for i, ((q, a), u) in enumerate(zip(questions, user_answers)):
-            mark = '✅' if u == a else '❌'
-            review.append(f"{mark} {q} Your answer: {u if u is not None else 'timeout'} (Correct: {a})")
-        embed.add_field(name="Question Review", value='\n'.join(review), inline=False)
+        embed.add_field(name="Total Correct", value=f"{correct}/20", inline=True)
+        embed.add_field(name="Avg Time/Question", value=f"{avg_time:.1f}s", inline=True)
+        
+        # Show question review grouped by difficulty
+        for diff in ['easy', 'medium', 'hard', 'extreme']:
+            review = []
+            diff_questions = [(q, a, u) for (q, a, d), u in zip(questions, user_answers) if d == diff]
+            for i, (q, a, u) in enumerate(diff_questions, 1):
+                mark = '✅' if u == a else '❌'
+                review.append(f"{mark} Q{i}: {q}\nYour answer: {u if u is not None else 'timeout'} (Correct: {a})")
+            if review:
+                embed.add_field(
+                    name=f"{diff.title()} Questions Review",
+                    value='\n'.join(review),
+                    inline=False
+                )
+                
+        # Update total score
+        final_score = int((total_points / 130) * 100)  # Max points: 130
+        await self.update_score(ctx.author.id, 'math-challenge', final_score)
         
         await ctx.send(embed=embed)
         
