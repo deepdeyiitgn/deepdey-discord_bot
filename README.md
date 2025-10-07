@@ -53,10 +53,12 @@ python bot.py
 **Core:**
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![discord.py](https://img.shields.io/badge/discord.py-5865F2?style=for-the-badge&logo=discord&logoColor=white)
+![Html](https://camo.githubusercontent.com/10c7a8fa2cf317cc7c4af6f13efac086a9f0ea010f0dfc746c94e5cde310b339/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f48544d4c352d4533344632363f7374796c653d666f722d7468652d6261646765266c6f676f3d68746d6c35266c6f676f436f6c6f723d7768697465)
 
 **Tools & Hosting:**
 ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Render](https://img.shields.io/badge/render-181717?style=for-the-badge&logo=render&logoColor=white)
 
 ---
 
