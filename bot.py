@@ -24,62 +24,72 @@ app = Flask('')
 
 @app.route('/')
 def home():
+    return """
+    <html>
+    <head>
+        <title>Bot Status🏓 || deepdeyiitk.com</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #0d1117;
+                color: #c9d1d9;
+                text-align: center;
+                padding-top: 40px;
+            }
+            a {
+                color: #58a6ff;
+                text-decoration: none;
+                font-weight: bold;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+            .container {
+                border: 1px solid #30363d;
+                border-radius: 10px;
+                display: inline-block;
+                padding: 20px 30px;
+                background-color: #161b22;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h2>✅ Bot is Alive!</h2>
+            <p><a href="https://bots.deepdeyiitk.com" target="_blank" style="color: inherit; text-decoration: none;">Made With 🩷 Deep</a></p>
+            <p>Support: <a href="https://www.instagram.com/deepdey.official/" target="_blank">@deepdey.official</a></p>
+            <p id="ping">⚡ Ping: 0ms</p>
+            <p id="uptime">⏱️ Uptime: 0:00:00</p>
+        </div>
+
+        <script>
+            async function updateStats() {
+                try {
+                    const res = await fetch('/stats');
+                    const data = await res.json();
+                    document.getElementById('ping').innerText = "⚡ Ping: " + data.ping + "ms";
+                    document.getElementById('uptime').innerText = "⏱️ Uptime: " + data.uptime;
+                } catch(e) {
+                    console.log("Failed to fetch stats:", e);
+                }
+            }
+            setInterval(updateStats, 1000); // update every 1 sec
+            updateStats();
+        </script>
+    </body>
+    </html>
+    """
+
+@app.route('/stats')
+def stats():
     try:
-        # Calculate uptime
         current_time = time.time()
-        if hasattr(bot, "start_time") and bot.start_time:
-            uptime_secs = int(current_time - bot.start_time)
-            uptime = str(datetime.timedelta(seconds=uptime_secs))
-        else:
-            uptime = "N/A"
-
-        # Get latency
+        uptime_secs = int(current_time - bot.start_time) if hasattr(bot, "start_time") and bot.start_time else 0
         latency = round(bot.latency * 1000, 2) if hasattr(bot, "latency") else 0
-
-        # Return dynamic HTML that auto-refreshes every 5 seconds
-        return f"""
-        <html>
-        <head>
-            <meta http-equiv="refresh" content="2">
-            <title>Bot Status</title>
-            <style>
-                body {{
-                    font-family: Arial, sans-serif;
-                    background-color: #0d1117;
-                    color: #c9d1d9;
-                    text-align: center;
-                    padding-top: 40px;
-                }}
-                a {{
-                    color: #58a6ff;
-                    text-decoration: none;
-                    font-weight: bold;
-                }}
-                a:hover {{
-                    text-decoration: underline;
-                }}
-                .container {{
-                    border: 1px solid #30363d;
-                    border-radius: 10px;
-                    display: inline-block;
-                    padding: 20px 30px;
-                    background-color: #161b22;
-                }}
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <h2>✅ Bot is Alive!</h2>
-                <p>Made With 🩷 Deep</p>
-                <p>Support: <a href="https://www.instagram.com/deepdey.official/" target="_blank">@deepdey.official</a></p>
-                <p>⚡ Ping: {latency}ms</p>
-                <p>⏱️ Uptime: {uptime}</p>
-            </div>
-        </body>
-        </html>
-        """
+        return {"uptime": str(datetime.timedelta(seconds=uptime_secs)), "ping": latency}
     except Exception as e:
-        return f"<b>Bot is alive but failed to fetch stats 😅:</b> {e}"
+        return {"uptime": "N/A", "ping": 0}
+
 
 def run_flask():
     app.run(host='0.0.0.0', port=8080)
