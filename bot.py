@@ -36,14 +36,50 @@ def home():
         # Get latency
         latency = round(bot.latency * 1000, 2) if hasattr(bot, "latency") else 0
 
-        return (
-            f"✅ Bot is alive! | Made With 🩷 Deep"
-            f" || Support: @deepdey.official"
-            f" || Instagram: https://www.instagram.com/deepdey.official/"
-            f" || Ping: {latency}ms | Uptime: {uptime}"
-        )
+        # Return dynamic HTML that auto-refreshes every 5 seconds
+        return f"""
+        <html>
+        <head>
+            <meta http-equiv="refresh" content="2">
+            <title>Bot Status</title>
+            <style>
+                body {{
+                    font-family: Arial, sans-serif;
+                    background-color: #0d1117;
+                    color: #c9d1d9;
+                    text-align: center;
+                    padding-top: 40px;
+                }}
+                a {{
+                    color: #58a6ff;
+                    text-decoration: none;
+                    font-weight: bold;
+                }}
+                a:hover {{
+                    text-decoration: underline;
+                }}
+                .container {{
+                    border: 1px solid #30363d;
+                    border-radius: 10px;
+                    display: inline-block;
+                    padding: 20px 30px;
+                    background-color: #161b22;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h2>✅ Bot is Alive!</h2>
+                <p>Made With 🩷 Deep</p>
+                <p>Support: <a href="https://www.instagram.com/deepdey.official/" target="_blank">@deepdey.official</a></p>
+                <p>⚡ Ping: {latency}ms</p>
+                <p>⏱️ Uptime: {uptime}</p>
+            </div>
+        </body>
+        </html>
+        """
     except Exception as e:
-        return f"Bot is alive but failed to fetch stats 😅: {e}"
+        return f"<b>Bot is alive but failed to fetch stats 😅:</b> {e}"
 
 def run_flask():
     app.run(host='0.0.0.0', port=8080)
@@ -52,6 +88,7 @@ def keep_alive():
     t = Thread(target=run_flask)
     t.daemon = True
     t.start()
+
 
 
 
