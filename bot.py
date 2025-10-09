@@ -28,6 +28,7 @@ def home():
     <html>
     <head>
         <title>Bot Status🏓 || deepdeyiitk.com</title>
+        <link rel="icon" type="image/png" href="https://i.postimg.cc/YSV9JqBD/Neon-Green-Circle-Frame-Fitness-You-Tube-Profile-Picturedurga-puja.png">
         <style>
             body {
                 font-family: Arial, sans-serif;
