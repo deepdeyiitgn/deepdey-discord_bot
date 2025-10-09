@@ -24,7 +24,7 @@ app = Flask('')
 
 @app.route('/')
 def home():
-    return "Bot is alive!"
+    return "Bot is alive! || Made With 🩷 Deep || Support: @deepdey.official ~ instagram: https://www.instagram.com/deepdey.official/  || Ping: {latency}ms | Uptime: {uptime}"
 
 def run_flask():
     app.run(host='0.0.0.0', port=8080)
