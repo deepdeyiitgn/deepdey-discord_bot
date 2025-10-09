@@ -29,6 +29,324 @@ def home():
     <head>
         <title>Bot Status🏓 || deepdeyiitk.com || Last updated: 09/10/2025 ~ 22:11:55 pm</title>
         <link rel="icon" type="image/png" href="https://i.postimg.cc/YSV9JqBD/Neon-Green-Circle-Frame-Fitness-You-Tube-Profile-Picturedurga-puja.png">
+
+         <!-- Navaratri & Dussehra Popup | Dates: 22 Sept 2025 – 2 Oct 2025 -->
+
+
+<div>
+  
+  <div id="festive-popup-container">
+  <div id="festive-popup-overlay">
+    <div id="festive-popup">
+      <button id="close-popup-btn" title="Close">&times;</button>
+      <h2 id="popup-title"></h2>
+      <p id="popup-message"></p>
+      <div id="countdown-timer"></div>
+      <div id="stopwatch" style="display:none;"></div>
+      <div class="popup-buttons">
+        <button class="popup-btn" id="generate-flowers-btn">🌸 Shower Flowers</button>
+        <button class="popup-btn" id="get-blessed-btn">🙏 Receive Blessings</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="blessing-popup-overlay">
+    <div id="blessing-popup">
+      <h3 id="blessing-title"></h3>
+      <p id="blessing-message"></p>
+      <button class="popup-btn" id="close-blessing-btn">Close</button>
+    </div>
+  </div>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Lobster&family=Poppins:wght@400;600&display=swap');
+
+    #festive-popup-overlay, #blessing-popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.75);
+      z-index: 99999; /* Highest z-index to stay on top */
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+      box-sizing: border-box;
+    }
+
+    #festive-popup, #blessing-popup {
+      position: relative;
+      background-size: cover;
+      background-position: center;
+      padding: 30px 40px;
+      border-radius: 20px;
+      text-align: center;
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      max-width: 95%;
+      width: 600px;
+      box-shadow: 0 10px 40px rgba(255,152,0,0.5);
+      border: 2px solid #ff9800;
+      animation: zoomIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform-origin: center;
+    }
+    
+    #blessing-popup {
+        background: #fff;
+        color: #333;
+    }
+
+    @keyframes zoomIn {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes zoomOut {
+      from { opacity: 1; transform: scale(1); }
+      to { opacity: 0; transform: scale(0.8); }
+    }
+
+    #festive-popup h2 {
+      font-family: 'Lobster', cursive;
+      font-size: clamp(2rem, 6vw, 2.8rem);
+      margin-bottom: 15px;
+      text-shadow: 3px 3px 10px rgba(0,0,0,0.8);
+      color: #FFD700; /* Gold color */
+    }
+
+    #festive-popup p {
+      font-size: clamp(1rem, 3vw, 1.2rem);
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+      line-height: 1.6;
+    }
+
+    #countdown-timer, #stopwatch {
+      font-size: clamp(1.2rem, 4vw, 1.5rem);
+      font-weight: 600;
+      margin-top: 25px;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 12px;
+      border-radius: 10px;
+      display: inline-block;
+    }
+
+    .popup-buttons {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .popup-btn {
+      background: linear-gradient(45deg, #ff9800, #f57c00);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .popup-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+    
+    #blessing-popup h3 {
+      font-family: 'Lobster', cursive;
+      font-size: 2rem;
+      color: #f57c00;
+    }
+
+    #blessing-popup p {
+      font-size: 1.1rem;
+      color: #555;
+    }
+
+    #close-popup-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 2.5rem;
+      cursor: pointer;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
+      line-height: 1;
+    }
+
+    .flower-petal {
+      position: fixed; /* Use fixed to fall over the whole page */
+      top: -20px;
+      width: 15px;
+      height: 15px;
+      background-color: #ffeb3b;
+      border-radius: 50% 0;
+      animation: fall linear infinite;
+      z-index: 100000;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(105vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // --- Configuration ---
+      const festiveData = {
+        '2025-09-23': { day: 1, title: 'Happy Navaratri! Day 1', message: 'May the divine grace of Maa Shailaputri bring you unparalleled strength, peace, and prosperity. Wishing you a joyous start to Navaratri!', blessing: 'On Day 1, we worship Maa Shailaputri, the daughter of the Himalayas. She embodies purity and unwavering determination.', image: 'https://images.pexels.com/photos/17585093/pexels-photo-17585093/free-photo-of-a-statue-of-a-goddess-in-a-temple.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
+        '2025-09-24': { day: 2, title: 'Shubh Navaratri! Day 2', message: 'Let the blessings of Maa Brahmacharini guide your spirit towards devotion and inner calm. Have a spiritually uplifting day!', blessing: 'Maa Brahmacharini, worshipped on Day 2, represents asceticism and devotion. She grants her devotees wisdom and tranquility.', image: 'https://images.pexels.com/photos/17585093/pexels-photo-17585093/free-photo-of-a-statue-of-a-goddess-in-a-temple.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
+        '2025-09-25': { day: 3, title: 'Joyous Navaratri! Day 3', message: 'May the radiant glow of Maa Chandraghanta fill your life with courage, grace, and serenity. Wishing you a blessed day!', blessing: 'Day 3 is for Maa Chandraghanta. Adorned with a crescent moon, she is the symbol of bravery and dispels all evils.', image: 'https://images.pexels.com/photos/17585093/pexels-photo-17585093/free-photo-of-a-statue-of-a-goddess-in-a-temple.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
+        '2025-09-26': { day: 4, title: 'Happy Navaratri! Day 4', message: 'May the creative energy of Maa Kushmanda bless your world with happiness, health, and abundance. Stay joyful!', blessing: 'Maa Kushmanda, worshipped on Day 4, is believed to be the creator of the universe. She bestows good health and wealth.', image: 'https://images.pexels.com/photos/17585093/pexels-photo-17585093/free-photo-of-a-statue-of-a-goddess-in-a-temple.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
+        '2025-09-27': { day: 5, title: 'Blessed Navaratri! Day 5', message: 'Feel the warmth of Maa Skandamata\'s love. May she shower you and your loved ones with boundless affection and care.', blessing: 'Day 5 honours Maa Skandamata, the mother of Lord Kartikeya. She symbolizes the pure, selfless love of a mother.', image: 'https://images.pexels.com/photos/17585093/pexels-photo-17585093/free-photo-of-a-statue-of-a-goddess-in-a-temple.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
+        '2025-09-28': { day: 6, title: 'Divine Navaratri! Day 6', message: 'May the fierce and benevolent Maa Katyayani empower you to conquer all challenges with courage and conviction. Jai Mata Di!', blessing: 'Maa Katyayani, worshipped on Day 6, is the warrior goddess who grants strength to overcome life\'s obstacles.', image: 'https://images.pexels.com/photos/17585093/pexels-photo-17585093/free-photo-of-a-statue-of-a-goddess-in-a-temple.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
+        '2025-09-29': { day: 7, title: 'Shubho Maha Saptami!', message: 'As the dhak beats echo, may your heart be filled with immense joy. Wishing you a vibrant start to Durga Puja celebrations!', blessing: 'Maha Saptami marks the formal beginning of Durga Puja. The Goddess is invoked into the idols, bringing her divine presence to the pandals.', image: 'https://images.pexels.com/photos/17585116/pexels-photo-17585116/free-photo-of-a-statue-of-a-god-with-many-arms.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
+        '2025-09-30': { day: 8, title: 'Shubho Maha Ashtami!', message: 'May the divine power of Maa Durga bless you with strength and fortitude. Wishing you a spiritually profound Maha Ashtami!', blessing: 'Maha Ashtami celebrates Maa Durga\'s victory over evil. It is the day of the powerful Sandhi Puja, a highlight of the festival.', image: 'https://images.pexels.com/photos/17585116/pexels-photo-17585116/free-photo-of-a-statue-of-a-god-with-many-arms.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
+        '2025-10-01': { day: 9, title: 'Shubho Maha Navami!', message: 'On this auspicious Maha Navami, may all your prayers be answered and your life be filled with prosperity and success!', blessing: 'Maha Navami is the culminating day of worship, celebrating the final victory of the Goddess. Grand aartis and rituals are performed.', image: 'https://images.pexels.com/photos/17585116/pexels-photo-17585116/free-photo-of-a-statue-of-a-god-with-many-arms.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' },
+        '2025-10-02': { day: 10, title: 'Happy Vijayadashami!', message: 'May the victory of good over evil inspire you towards a life of truth and courage. Shubho Bijoya and Happy Dussehra to you and your family!', blessing: 'Vijayadashami, or Dussehra, celebrates triumph and new beginnings. It is a day of joy, feasting, and exchanging heartfelt greetings.', image: 'https://images.pexels.com/photos/17585116/pexels-photo-17585116/free-photo-of-a-statue-of-a-god-with-many-arms.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1' }
+      };
+      const postDussehraDate = new Date('2025-10-02T00:00:00');
+      // --- End Configuration ---
+      
+      const popupOverlay = document.getElementById('festive-popup-overlay');
+      const popup = document.getElementById('festive-popup');
+      const closeBtn = document.getElementById('close-popup-btn');
+      const titleEl = document.getElementById('popup-title');
+      const messageEl = document.getElementById('popup-message');
+      const countdownEl = document.getElementById('countdown-timer');
+      const stopwatchEl = document.getElementById('stopwatch');
+      const flowersBtn = document.getElementById('generate-flowers-btn');
+      const blessedBtn = document.getElementById('get-blessed-btn');
+      const blessingOverlay = document.getElementById('blessing-popup-overlay');
+      const blessingTitle = document.getElementById('blessing-title');
+      const blessingMessage = document.getElementById('blessing-message');
+      const closeBlessingBtn = document.getElementById('close-blessing-btn');
+
+      let intervalId;
+
+      const today = new Date();
+      // Use this for testing any date: const today = new Date('2025-09-28');
+      const todayString = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+      
+      const currentData = festiveData[todayString];
+
+      function showMainPopup() {
+        if (sessionStorage.getItem('festivePopupShown')) return;
+
+        if (currentData) {
+          setupPopupContent(currentData);
+          popupOverlay.style.display = 'flex';
+          startCountdown();
+          sessionStorage.setItem('festivePopupShown', 'true');
+        } else if (today >= postDussehraDate) {
+          setupStopwatchPopup();
+          popupOverlay.style.display = 'flex';
+          startStopwatch();
+          sessionStorage.setItem('festivePopupShown', 'true');
+        }
+      }
+      
+      function setupPopupContent(data) {
+        titleEl.textContent = data.title;
+        messageEl.textContent = data.message;
+        popup.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url('${data.image}')`;
+        blessedBtn.style.display = 'inline-flex';
+        countdownEl.style.display = 'inline-block';
+        stopwatchEl.style.display = 'none';
+      }
+
+      function setupStopwatchPopup() {
+        titleEl.textContent = 'It will happen again next year! 🌸';
+        messageEl.textContent = '✨ Victory of Good Over Evil, Light Over Darkness, and Love Over Hatred. May this Vijaya Dashami remind us that every ending carries the seed of a new beginning — every goodbye, a promise of return.';
+                                 
+                                   
+        popup.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url('https://i.postimg.cc/Y9CkRzsq/65155711dce8135d31068666-1695897361989.jpg')`;
+        blessedBtn.style.display = 'none';
+        countdownEl.style.display = 'none';
+        stopwatchEl.style.display = 'inline-block';
+      }
+
+      function closeMainPopup() {
+        popup.style.animation = 'zoomOut 0.4s forwards';
+        setTimeout(() => {
+          popupOverlay.style.display = 'none';
+          popup.style.animation = 'zoomIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+        }, 400);
+      }
+
+      function startCountdown() {
+        if(intervalId) clearInterval(intervalId);
+        intervalId = setInterval(() => {
+          const now = new Date();
+          const nextDay = new Date(now);
+          nextDay.setDate(now.getDate() + 1);
+          nextDay.setHours(0, 0, 0, 0);
+          const diff = nextDay - now;
+          const h = Math.floor(diff / (1000*60*60));
+          const m = Math.floor((diff % (1000*60*60)) / (1000*60));
+          const s = Math.floor((diff % (1000*60)) / 1000);
+          countdownEl.innerHTML = `Next day begins in: ${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`;
+        }, 1000);
+      }
+
+      function startStopwatch() {
+        if(intervalId) clearInterval(intervalId);
+        intervalId = setInterval(() => {
+          const diff = new Date() - postDussehraDate;
+          const d = Math.floor(diff / (1000*60*60*24));
+          const h = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+          const m = Math.floor((diff % (1000*60*60)) / (1000*60));
+          const s = Math.floor((diff % (1000*60)) / 1000);
+          stopwatchEl.innerHTML = `Time since Dussehra: ${d}d ${h}h ${m}m ${s}s`;
+        }, 1000);
+      }
+      
+      flowersBtn.addEventListener('click', () => {
+        for (let i = 0; i < 30; i++) {
+          const petal = document.createElement('div');
+          petal.className = 'flower-petal';
+          petal.style.left = Math.random() * 100 + 'vw';
+          petal.style.animationDuration = Math.random() * 3 + 4 + 's';
+          petal.style.animationDelay = Math.random() * 2 + 's';
+          petal.style.backgroundColor = `hsl(${Math.random() * 60 + 300}, 100%, 70%)`;
+          petal.style.transform = `rotate(${Math.random() * 360}deg)`;
+          document.getElementById('festive-popup-container').appendChild(petal);
+          setTimeout(() => petal.remove(), 7000);
+        }
+      });
+      
+      blessedBtn.addEventListener('click', () => {
+        if (currentData) {
+            blessingTitle.textContent = currentData.title;
+            blessingMessage.textContent = currentData.blessing;
+            blessingOverlay.style.display = 'flex';
+        }
+      });
+      
+      closeBtn.addEventListener('click', closeMainPopup);
+      closeBlessingBtn.addEventListener('click', () => blessingOverlay.style.display = 'none');
+      
+      // Initialize the popup
+      showMainPopup();
+    });
+  </script>
+</div>
+
+</div>
+        
         <style>
             body {
                 font-family: Arial, sans-serif;
@@ -77,354 +395,7 @@ def home():
             setInterval(updateStats, 1000); // update every 1 sec
             updateStats();
         </script>
-         <script>
-        // Copy-paste this into your site. Change TARGET_URL to monitor another host.
-        // REFRESH_MS controls realtime update frequency (ms).
-
-        (() => {
-            const TARGET_URL = window.location.origin; // <-- change if you want to monitor other URL
-            const REFRESH_MS = 5000; // update every 5 seconds
-
-            // Minimal CSS injected (Updated for bottom-center and improved mobile view)
-            const style = document.createElement('style');
-            style.textContent = `
-            /* Button: Fixed bottom-center on all screen sizes */
-            #sysBtn{
-                position:fixed;
-                left:50%; /* Center horizontally */
-                transform:translateX(-50%); /* Adjust for own width */
-                bottom:20px;
-                z-index:2147483647;
-                width:48px;
-                height:48px;
-                border-radius:50%;
-                border:none;
-                background:#0f172a;
-                color:#fff;
-                font-size:20px;
-                display:none;
-                align-items:center;
-                justify-content:center;
-                cursor:pointer;
-                box-shadow:0 8px 22px rgba(2,6,23,0.4);
-                transition: transform 0.2s;
-            }
-            #sysBtn:hover { transform: translateX(-50%) scale(1.05); }
-
-            /* Popup: Fixed bottom-center on Desktop */
-            #sysPopup{
-                position:fixed;
-                left:50%;
-                transform:translateX(-50%);
-                bottom:80px;
-                width:360px;
-                max-width:96vw;
-                background:#fff;
-                border-radius:12px;
-                box-shadow:0 14px 36px rgba(2,6,23,0.18);
-                z-index:2147483647;
-                overflow:hidden;
-                font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-            }
-            #sysPopup .head{
-                display:flex;
-                border-bottom:1px solid #eef2f7;
-                background:#f8fafc;
-            }
-            #sysPopup .tab{
-                flex:1;
-                text-align:center;
-                padding:12px 6px;
-                font-weight:600;
-                font-size:13px;
-                cursor:pointer;
-                user-select:none;
-                color:#475569;
-                transition: background 0.1s;
-            }
-            #sysPopup .tab:hover { background:#f1f5f9; }
-            #sysPopup .tab.active{
-                background:#fff;
-                color:#0f172a;
-                border-bottom: 2px solid #0f172a;
-            }
-            #sysPopup .content{
-                padding:15px;
-                font-size:13px;
-                line-height:1.4;
-                max-height:450px;
-                overflow-y:auto;
-                color:#0f172a;
-                -webkit-overflow-scrolling: touch;
-            }
-            .sys-row{
-                display:flex;
-                justify-content:space-between;
-                margin:4px 0;
-                padding:8px;
-                border-radius:6px;
-                background:#fbfdff;
-                align-items:center;
-                border: 1px solid #eef2f7;
-            }
-            .sys-row small{color:#6b7280}
-            .est-tag{font-size:10px;color:#b91c1c;margin-left:6px;font-weight:700;padding:2px 6px;border-radius:4px;background:#fee2e2}
-            .note-box{
-                margin-top:12px;
-                padding:12px;
-                background:#f8fafc;
-                border-radius:8px;
-                font-size:12px;
-                color:#0f172a;
-                border-left: 3px solid #10b981;
-            }
-            
-            /* Mobile adjustment: Center vertically and horizontally for better visibility */
-            @media (max-width:640px){
-                #sysPopup{
-                    left:50%;
-                    top:50%;
-                    right:auto;
-                    bottom:auto;
-                    transform:translate(-50%,-50%);
-                    width:92vw;
-                    max-height:80vh; /* Limit height on small screens */
-                    box-shadow:0 25px 50px -12px rgba(0, 0, 0, 0.25);
-                }
-                #sysPopup .content {
-                    max-height: calc(80vh - 50px);
-                }
-                #sysBtn{
-                    width:52px;
-                    height:52px;
-                    font-size:24px;
-                }
-            }
-            `;
-            document.head.appendChild(style);
-
-            // Button
-            const btn = document.createElement('button');
-            btn.id = 'sysBtn';
-            btn.title = 'System Monitor';
-            btn.innerHTML = '⚡';
-            btn.style.display = 'none';
-            document.body.appendChild(btn);
-
-            // Popup
-            const popup = document.createElement('div');
-            popup.id = 'sysPopup';
-            popup.style.display = 'none';
-            popup.innerHTML = `
-                <div class="head">
-                <div class="tab active" data-tab="server">Server Metrics</div>
-                <div class="tab" data-tab="user">User/Browser Info</div>
-                </div>
-                <div class="content" id="sysContent">Initializing...</div>
-            `;
-            document.body.appendChild(popup);
-
-            const $ = (s, r = popup) => r.querySelector(s);
-
-            // Show button only when scrolled to bottom (footer area)
-            function checkScrollForButton() {
-                // Determine if the user is within 100px of the bottom of the page
-                const nearBottom = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 100);
-                btn.style.display = nearBottom ? 'flex' : 'none';
-            }
-            checkScrollForButton();
-            window.addEventListener('scroll', checkScrollForButton);
-            window.addEventListener('resize', checkScrollForButton);
-
-            // Tabs
-            popup.addEventListener('click', (e) => {
-                const t = e.target.closest('.tab');
-                if (!t) return;
-                popup.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-                t.classList.add('active');
-                updateOnce();
-            });
-
-            // Toggle
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
-                updateOnce();
-            });
-            document.addEventListener('click', (e) => {
-                if (popup.style.display !== 'block') return;
-                if (!popup.contains(e.target) && e.target !== btn) popup.style.display = 'none';
-            });
-
-            // Measure server (ping, status, size, headers) - best effort; may be limited by CORS
-            async function measureServer() {
-                const start = performance.now();
-                let ping = '—';
-                let status = '—';
-                let sizeBytes = null;
-                let headersObj = {};
-                try {
-                    const resp = await fetch(TARGET_URL, { method: 'GET', cache: 'no-store' });
-                    const end = performance.now();
-                    ping = Math.round(end - start) + ' ms';
-                    status = `${resp.status} ${resp.statusText}`;
-                    const cl = resp.headers.get('content-length');
-                    if (cl) sizeBytes = parseInt(cl, 10);
-                    else {
-                        // If no content-length, try to get size from blob
-                        const blob = await resp.clone().blob();
-                        sizeBytes = blob.size;
-                    }
-                    ['content-type','cache-control','last-modified','etag','server','date'].forEach(k => {
-                        const v = resp.headers.get(k);
-                        if (v) headersObj[k] = v;
-                    });
-                } catch (err) {
-                    ping = 'ERR';
-                    status = 'Fetch failed (CORS/network)';
-                    sizeBytes = null;
-                    headersObj = {};
-                }
-                return { ping, status, sizeBytes, headersObj };
-            }
-
-            // User info via browser APIs
-            async function getUserInfo() {
-                const nav = navigator;
-                const conn = nav.connection || nav.mozConnection || nav.webkitConnection || null;
-                let batteryInfo = null;
-                try { if (navigator.getBattery) { const b = await navigator.getBattery(); batteryInfo = { level: Math.round(b.level*100)+'%', charging: b.charging }; } } catch(e){ batteryInfo=null; }
-                const perf = performance;
-                let mem = null;
-                if (perf && perf.memory) {
-                    mem = {
-                        usedJSHeapSize: Math.round(perf.memory.usedJSHeapSize/1024/1024) + ' MB',
-                        totalJSHeapSize: Math.round(perf.memory.totalJSHeapSize/1024/1024) + ' MB'
-                    };
-                }
-
-                // cookies count
-                const cookieStr = document.cookie || '';
-                const cookiesCount = cookieStr ? cookieStr.split(';').length : 0;
-
-                // time info
-                const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'n/a';
-                const localTime = new Date().toLocaleString();
-
-                return {
-                    userAgent: nav.userAgent,
-                    platform: nav.platform,
-                    language: nav.language,
-                    cores: nav.hardwareConcurrency || 'n/a',
-                    cookieEnabled: nav.cookieEnabled,
-                    cookiesCount,
-                    online: nav.onLine,
-                    connection: conn ? { effectiveType: conn.effectiveType, downlink: conn.downlink, rtt: conn.rtt } : null,
-                    battery: batteryInfo,
-                    memory: mem,
-                    deviceMemory: navigator.deviceMemory || 'n/a',
-                    plugins: navigator.plugins ? navigator.plugins.length : 'n/a',
-                    touchPoints: navigator.maxTouchPoints || 0,
-                    doNotTrack: nav.doNotTrack || 'n/a',
-                    viewport: { w: window.innerWidth, h: window.innerHeight },
-                    timezone: tz,
-                    localTime
-                };
-            }
-
-            // Helpers
-            function humanBytes(n) {
-                if (n === null || n === undefined) return '—';
-                if (typeof n !== 'number') return n;
-                const sizes = ['B','KB','MB','GB','TB'];
-                if (n === 0) return '0 B';
-                const i = Math.floor(Math.log(n)/Math.log(1024));
-                return (n/Math.pow(1024,i)).toFixed(i?2:0) + ' ' + sizes[i];
-            }
-
-            function renderServerTab(data) {
-                const rows = [];
-                rows.push(`<div class="sys-row"><div><small>Target URL</small></div><div><small style="max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">${TARGET_URL}</small></div></div>`);
-                rows.push(`<div class="sys-row"><div><small>Ping Latency</small></div><div><strong>${data.ping}</strong></div></div>`);
-                rows.push(`<div class="sys-row"><div><small>HTTP Status</small></div><div><strong>${data.status}</strong></div></div>`);
-                rows.push(`<div class="sys-row"><div><small>Response Size</small></div><div><strong>${humanBytes(data.sizeBytes)}</strong></div></div>`);
-                const hdrs = Object.keys(data.headersObj || {});
-                if (hdrs.length) {
-                    hdrs.forEach(k => rows.push(`<div class="sys-row"><div><small>${k}</small></div><div><small style="max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">${data.headersObj[k]}</small></div></div>`));
-                }
-                
-                // Estimated (simulated) section - clearly labelled as ESTIMATED (SIMULATED)
-                rows.push(`<div style="margin-top:10px;border-top:1px dashed #eef2f7;padding-top:10px;color:#374151;font-size:12px"><strong>Server Internal Metrics</strong> <span class="est-tag">SIMULATED</span></div>`);
-                const estCpu = (Math.floor(Math.random()*40)+10) + '%';
-                const estRam = (Math.floor(Math.random()*50)+20) + '%';
-                const estDisk = (Math.floor(Math.random()*60)+15) + '%';
-                rows.push(`<div class="sys-row"><div><small>CPU Load (est)</small></div><div><strong>${estCpu}</strong></div></div>`);
-                rows.push(`<div class="sys-row"><div><small>RAM Usage (est)</small></div><div><strong>${estRam}</strong></div></div>`);
-                rows.push(`<div class="sys-row"><div><small>Disk Usage (est)</small></div><div><strong>${estDisk}</strong></div></div>`);
-                rows.push(`<div class="note-box">Note: CPU/RAM/Disk shown above are client-side random **simulations** as browsers cannot access host internals. Ping, Status, and Response size are measured live (subject to browser CORS restrictions).</div>`);
-                return rows.join('');
-            }
-
-            function renderUserTab(info) {
-                const r = [];
-                r.push(`<div class="sys-row"><div><small>Browser/UA</small></div><div style="max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap"><small>${info.userAgent}</small></div></div>`);
-                r.push(`<div class="sys-row"><div><small>OS Platform</small></div><div><strong>${info.platform}</strong></div></div>`);
-                r.push(`<div class="sys-row"><div><small>Viewport Size</small></div><div><strong>${info.viewport.w} × ${info.viewport.h}</strong></div></div>`);
-                r.push(`<div class="sys-row"><div><small>CPU Cores</small></div><div><strong>${info.cores}</strong></div></div>`);
-                r.push(`<div class="sys-row"><div><small>Device Memory</small></div><div><strong>${info.deviceMemory}</strong></div></div>`);
-                r.push(`<div class="sys-row"><div><small>JS Heap (Used/Total)</small></div><div><small>${info.memory ? (info.memory.usedJSHeapSize + ' / ' + info.memory.totalJSHeapSize) : 'n/a'}</small></div></div>`);
-                r.push(`<div class="sys-row"><div><small>Connection Status</small></div><div><small>${info.online ? `Online · ${info.connection ? `${info.connection.effectiveType} · ${info.connection.downlink}Mbps · rtt ${info.connection.rtt}ms` : 'n/a'}` : 'Offline'}</small></div></div>`);
-                r.push(`<div class="sys-row"><div><small>Timezone / Local Time</small></div><div><small>${info.timezone} · ${info.localTime}</small></div></div>`);
-                r.push(`<div class="sys-row"><div><small>Cookies</small></div><div><small>enabled:${info.cookieEnabled} · count:${info.cookiesCount}</small></div></div>`);
-                
-                // Show approximate storage sizes
-                try {
-                    r.push(`<div class="sys-row"><div><small>localStorage Size</small></div><div><small>${(function(){ try { return humanBytes(new Blob([JSON.stringify(localStorage)]).size); } catch(e){ return 'n/a'; } })()}</small></div></div>`);
-                } catch(e) {}
-                try {
-                    r.push(`<div class="sys-row"><div><small>sessionStorage Size</small></div><div><small>${(function(){ try { return humanBytes(new Blob([JSON.stringify(sessionStorage)]).size); } catch(e){ return 'n/a'; } })()}</small></div></div>`);
-                } catch(e) {}
-                
-                if (info.battery) r.push(`<div class="sys-row"><div><small>Battery Status</small></div><div><small>${info.battery.level}${info.battery.charging? ' · charging':''}</small></div></div>`);
-                r.push(`<div class="note-box">Privacy Note: **No data is stored or sent anywhere.** All values shown are read locally from your browser using standard Web APIs.</div>`);
-                return r.join('');
-            }
-
-            // Update logic
-            async function updateOnce() {
-                const active = popup.querySelector('.tab.active')?.dataset?.tab || 'server';
-                const c = $('#sysContent');
-                c.innerHTML = '<div style="text-align:center; padding:20px;">Loading data...</div>';
-                if (active === 'server') {
-                    const s = await measureServer();
-                    c.innerHTML = renderServerTab(s);
-                } else {
-                    const u = await getUserInfo();
-                    c.innerHTML = renderUserTab(u);
-                }
-            }
-
-            // Auto-refresh while popup open
-            setInterval(async () => {
-                if (popup.style.display !== 'block') return;
-                const active = popup.querySelector('.tab.active')?.dataset?.tab || 'server';
-                if (active === 'server') {
-                    const s = await measureServer();
-                    // Only update content, no need to show 'Loading'
-                    $('#sysContent').innerHTML = renderServerTab(s);
-                } else {
-                    const u = await getUserInfo();
-                    $('#sysContent').innerHTML = renderUserTab(u);
-                }
-            }, REFRESH_MS);
-
-            // Initial message
-            (async () => {
-                $('#sysContent').innerHTML = 'Ready — click a tab to load real-time data.';
-            })();
-
-        })();
-    </script>
+    
     </body>
     </html>
     """
