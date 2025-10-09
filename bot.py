@@ -24,7 +24,26 @@ app = Flask('')
 
 @app.route('/')
 def home():
-    return "Bot is alive! || Made With 🩷 Deep || Support: @deepdey.official ~ instagram: https://www.instagram.com/deepdey.official/  || Ping: {latency}ms | Uptime: {uptime}"
+    try:
+        # Calculate uptime
+        current_time = time.time()
+        if hasattr(bot, "start_time") and bot.start_time:
+            uptime_secs = int(current_time - bot.start_time)
+            uptime = str(datetime.timedelta(seconds=uptime_secs))
+        else:
+            uptime = "N/A"
+
+        # Get latency
+        latency = round(bot.latency * 1000, 2) if hasattr(bot, "latency") else 0
+
+        return (
+            f"✅ Bot is alive! | Made With 🩷 Deep"
+            f" || Support: @deepdey.official"
+            f" || Instagram: https://www.instagram.com/deepdey.official/"
+            f" || Ping: {latency}ms | Uptime: {uptime}"
+        )
+    except Exception as e:
+        return f"Bot is alive but failed to fetch stats 😅: {e}"
 
 def run_flask():
     app.run(host='0.0.0.0', port=8080)
@@ -33,6 +52,7 @@ def keep_alive():
     t = Thread(target=run_flask)
     t.daemon = True
     t.start()
+
 
 
 BASE_DIR = Path(__file__).parent
