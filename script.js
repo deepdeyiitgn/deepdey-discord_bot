@@ -354,4 +354,31 @@ if (!window.bgMusic) {
   document.addEventListener("keydown", startMusic);
 }
 
+// =======================
+// ✅ Auto-inject Open Graph Meta Tags for StudyBot (Deep Dey)
+// =======================
+(function() {
+  const head = document.querySelector("head");
+
+  const metaTags = [
+    { property: "og:type", content: "website" },
+    { property: "og:title", content: "StudyBot — Your Study Companion • Deep Dey" },
+    { property: "og:site_name", content: "Deep Dey - The FUTURE IITIAN 🎯" },
+    { property: "og:url", content: "https://bots.deepdeyiitk.com/" },
+    { property: "og:image", content: "https://i.postimg.cc/YSV9JqBD/Neon-Green-Circle-Frame-Fitness-You-Tube-Profile-Picturedurga-puja.png" },
+    { property: "og:description", content: "📘 StudyBot — the AI-powered Discord companion built by Deep Dey to boost discipline, focus, and consistency for JEE 2027 aspirants. Track uptime, check productivity, and stay accountable 24×7. Made with 🩷 and vision for IIT Gandhinagar." }
+  ];
+
+  metaTags.forEach(tagData => {
+    // Check if same OG tag already exists
+    if (!document.querySelector(`meta[property="${tagData.property}"]`)) {
+      const tag = document.createElement("meta");
+      tag.setAttribute("property", tagData.property);
+      tag.setAttribute("content", tagData.content);
+      head.appendChild(tag);
+    }
+  });
+
+  console.log("✅ OG meta tags injected for StudyBot — Deep Dey");
+})();
 
