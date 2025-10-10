@@ -366,7 +366,7 @@ if (!window.bgMusic) {
     { property: "og:site_name", content: "Deep Dey - The FUTURE IITIAN 🎯" },
     { property: "og:url", content: "https://bots.deepdeyiitk.com/" },
     { property: "og:image", content: "https://i.postimg.cc/YSV9JqBD/Neon-Green-Circle-Frame-Fitness-You-Tube-Profile-Picturedurga-puja.png" },
-    { property: "og:description", content: "📘 StudyBot — the AI-powered Discord companion built by Deep Dey to boost discipline, focus, and consistency for JEE 2027 aspirants. Track uptime, check productivity, and stay accountable 24×7. Made with 🩷 and vision for IIT Gandhinagar." }
+    { property: "og:description", content: "📘 StudyBot — the AI-powered Discord companion built by Deep Dey to boost discipline, focus, and consistency for JEE 2027 aspirants. Track uptime, check productivity, and stay accountable 24×7. Made with 🩷 and vision for IIT Kanpur." }
   ];
 
   metaTags.forEach(tagData => {
