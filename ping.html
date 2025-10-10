@@ -1,10 +1,333 @@
-
-
-    <html>
-    <head>
-        <title>Bot Status🏓 || deepdeyiitk.com</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>StudyBot — Your Study Companion • Bot Status🏓 || deepdeyiitk.com</title>
         <link rel="icon" type="image/png" href="https://i.postimg.cc/YSV9JqBD/Neon-Green-Circle-Frame-Fitness-You-Tube-Profile-Picturedurga-puja.png">
 
+         <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 2rem;
+        }
+
+        /* --- Popup Styles --- */
+        #festive-popup-overlay, #blessing-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #festive-popup, #blessing-popup {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            color: #fff;
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            animation: zoomIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #close-popup-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: transparent;
+            border: none;
+            font-size: 2.5rem;
+            color: #fff;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        #popup-title, #blessing-title {
+            margin-top: 0;
+            font-size: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+        }
+
+        #popup-message, #blessing-message {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+
+        #countdown-timer, #stopwatch {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: inline-block;
+            margin: 15px 0;
+        }
+
+        .popup-buttons {
+            margin-top: 20px;
+        }
+        
+        .popup-btn {
+            background: linear-gradient(45deg, #ff8c00, #ff4500);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            margin: 5px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .popup-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 100, 0, 0.4);
+        }
+
+        #close-blessing-btn {
+             background: #555;
+        }
+
+        /* --- Flower Petal Animation --- */
+        .flower-petal {
+            position: fixed;
+            top: -20px;
+            width: 15px;
+            height: 15px;
+            background-color: #ffc0cb;
+            border-radius: 0 50% 0 50%;
+            opacity: 0.9;
+            animation: fall linear forwards;
+            z-index: 1100;
+        }
+
+        /* --- Keyframe Animations --- */
+        @keyframes zoomIn {
+            from { transform: scale(0.3); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes zoomOut {
+            from { transform: scale(1); opacity: 1; }
+            to { transform: scale(0.3); opacity: 0; }
+        }
+
+        @keyframes fall {
+            to {
+                top: 105vh;
+                transform: translateX(50px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+
+
+    <div id="festive-popup-container">
+        <div id="festive-popup-overlay">
+            <div id="festive-popup">
+                <button id="close-popup-btn" title="Close" aria-label="Close popup">&times;</button>
+                <h2 id="popup-title"></h2>
+                <p id="popup-message"></p>
+                <div id="countdown-timer"></div>
+                <div id="stopwatch" style="display:none;"></div>
+                <div class="popup-buttons">
+                    <button class="popup-btn" id="generate-flowers-btn">🌸 Shower Flowers</button>
+                    <button class="popup-btn" id="get-blessed-btn">🙏 Receive Blessings</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="blessing-popup-overlay">
+            <div id="blessing-popup">
+                <h3 id="blessing-title"></h3>
+                <p id="blessing-message"></p>
+                <button class="popup-btn" id="close-blessing-btn" aria-label="Close blessing popup">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const festiveData = {
+                '2025-09-23': { day: 1, title: 'Happy Navaratri! Day 1', message: 'May the divine grace of Maa Shailaputri bring you strength. Shower blessings.', blessing: 'On Day 1, we worship Maa Shailaputri.', image: 'https://images.pexels.com/photos/17585093/pexels-photo-17585093.jpeg' },
+                '2025-09-24': { day: 2, title: 'Shubh Navaratri! Day 2', message: 'May Maa Brahmacharini guide your spirit.', blessing: 'Maa Brahmacharini represents asceticism and devotion.', image: 'https://images.pexels.com/photos/17585093/pexels-photo-17585093.jpeg' },
+                '2025-09-25': { day: 3, title: 'Joyous Navaratri! Day 3', message: 'May the glow of Maa Chandraghanta fill your life with courage.', blessing: 'Maa Chandraghanta is the symbol of bravery.', image: 'https://images.pexels.com/photos/17585093/pexels-photo-17585093.jpeg' },
+                '2025-09-26': { day: 4, title: 'Happy Navaratri! Day 4', message: 'Creative energy of Maa Kushmanda bless your world.', blessing: 'Maa Kushmanda bestows health and abundance.', image: 'https://images.pexels.com/photos/17585093/pexels-photo-17585093.jpeg' },
+                '2025-09-27': { day: 5, title: 'Blessed Navaratri! Day 5', message: 'Feel the warmth of Maa Skandamata\'s love.', blessing: 'Skandamata symbolizes selfless love.', image: 'https://images.pexels.com/photos/17585093/pexels-photo-17585093.jpeg' },
+                '2025-09-28': { day: 6, title: 'Divine Navaratri! Day 6', message: 'May Maa Katyayani empower you to conquer challenges.', blessing: 'Maa Katyayani grants strength to overcome obstacles.', image: 'https://images.pexels.com/photos/17585093/pexels-photo-17585093.jpeg' },
+                '2025-09-29': { day: 7, title: 'Shubho Maha Saptami!', message: 'Wishing you a vibrant start to Durga Puja celebrations!', blessing: 'Maha Saptami marks the formal beginning of Durga Puja.', image: 'https://images.pexels.com/photos/17585116/pexels-photo-17585116.jpeg' },
+                '2025-09-30': { day: 8, title: 'Shubho Maha Ashtami!', message: 'May Maa Durga bless you with strength and fortitude.', blessing: 'Maha Ashtami celebrates Maa Durga\'s victory over evil.', image: 'https://images.pexels.com/photos/17585116/pexels-photo-17585116.jpeg' },
+                '2025-10-01': { day: 9, title: 'Shubho Maha Navami!', message: 'May all your prayers be answered and life filled with prosperity.', blessing: 'Maha Navami celebrates final victory of the Goddess.', image: 'https://images.pexels.com/photos/17585116/pexels-photo-17585116.jpeg' },
+                '2025-10-02': { day: 10, title: 'Happy Vijayadashami!', message: 'Victory of good over evil — Shubho Bijoya!', blessing: 'Vijayadashami celebrates triumph and new beginnings.', image: 'https://images.pexels.com/photos/17585116/pexels-photo-17585116.jpeg' }
+            };
+
+            const navaratriStartDate = new Date('2025-09-23T00:00:00');
+            const postDussehraDate = new Date('2025-10-02T23:59:59');
+
+            const popupOverlay = document.getElementById('festive-popup-overlay');
+            const popup = document.getElementById('festive-popup');
+            const closeBtn = document.getElementById('close-popup-btn');
+            const titleEl = document.getElementById('popup-title');
+            const messageEl = document.getElementById('popup-message');
+            const countdownEl = document.getElementById('countdown-timer');
+            const stopwatchEl = document.getElementById('stopwatch');
+            const flowersBtn = document.getElementById('generate-flowers-btn');
+            const blessedBtn = document.getElementById('get-blessed-btn');
+            const blessingOverlay = document.getElementById('blessing-popup-overlay');
+            const blessingTitle = document.getElementById('blessing-title');
+            const blessingMessage = document.getElementById('blessing-message');
+            const closeBlessingBtn = document.getElementById('close-blessing-btn');
+
+            let intervalId;
+            const today = new Date();
+            const todayString = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+            const currentData = festiveData[todayString];
+
+            function showMainPopup() {
+                try {
+                    if (sessionStorage.getItem('festivePopupShown')) return;
+                } catch (e) { /* Fallback */ }
+
+                if (currentData) {
+                    setupPopupContent(currentData);
+                    popupOverlay.style.display = 'flex';
+                    startCountdown();
+                } else if (today < navaratriStartDate) {
+                    setupPreFestivalPopup();
+                    popupOverlay.style.display = 'flex';
+                    startPreFestivalCountdown();
+                } else if (today > postDussehraDate) {
+                    setupStopwatchPopup();
+                    popupOverlay.style.display = 'flex';
+                    startStopwatch();
+                }
+                
+                try { sessionStorage.setItem('festivePopupShown', '1'); } catch (e) {}
+            }
+            
+            function setupPreFestivalPopup() {
+                titleEl.textContent = 'Navaratri is Coming Soon!';
+                messageEl.textContent = 'Get ready for nine nights of devotion, dance, and divine blessings. The celebration begins shortly!';
+                popup.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url('https://images.pexels.com/photos/17585116/pexels-photo-17585116.jpeg')`;
+                blessedBtn.style.display = 'none';
+                countdownEl.style.display = 'inline-block';
+                stopwatchEl.style.display = 'none';
+            }
+            
+            function setupPopupContent(data) {
+                titleEl.textContent = data.title;
+                messageEl.textContent = data.message;
+                popup.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url('${data.image}')`;
+                blessedBtn.style.display = 'inline-flex';
+                countdownEl.style.display = 'inline-block';
+                stopwatchEl.style.display = 'none';
+            }
+
+            function setupStopwatchPopup() {
+                titleEl.textContent = 'It will happen again next year! 🌸';
+                messageEl.textContent = '✨ Victory of Good Over Evil, Light Over Darkness, and Love Over Hatred. May this Vijaya Dashami remind us that every ending carries the seed of a new beginning — every goodbye, a promise of return.';
+                popup.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url('https://i.postimg.cc/Y9CkRzsq/65155711dce8135d31068666-1695897361989.jpg')`;
+                blessedBtn.style.display = 'none';
+                countdownEl.style.display = 'none';
+                stopwatchEl.style.display = 'inline-block';
+            }
+
+            function closeMainPopup() {
+                popup.style.animation = 'zoomOut 0.4s forwards';
+                setTimeout(() => {
+                    popupOverlay.style.display = 'none';
+                    popup.style.animation = 'zoomIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                }, 400);
+            }
+            
+            function startPreFestivalCountdown() {
+                if (intervalId) clearInterval(intervalId);
+                intervalId = setInterval(() => {
+                    const diff = navaratriStartDate - new Date();
+                    if (diff <= 0) {
+                        clearInterval(intervalId);
+                        countdownEl.innerHTML = "The festival has begun!";
+                        return;
+                    }
+                    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const s = Math.floor((diff % (1000 * 60)) / 1000);
+                    countdownEl.innerHTML = `Celebration begins in: ${d}d ${h}h ${m}m ${s}s`;
+                }, 1000);
+            }
+
+            function startCountdown() {
+                if (intervalId) clearInterval(intervalId);
+                intervalId = setInterval(() => {
+                    const now = new Date();
+                    const nextDay = new Date(now);
+                    nextDay.setDate(now.getDate() + 1);
+                    nextDay.setHours(0, 0, 0, 0);
+                    const diff = nextDay - now;
+                    const h = Math.floor(diff / (1000 * 60 * 60));
+                    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const s = Math.floor((diff % (1000 * 60)) / 1000);
+                    countdownEl.innerHTML = `Next day begins in: ${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`;
+                }, 1000);
+            }
+
+            function startStopwatch() {
+                if (intervalId) clearInterval(intervalId);
+                intervalId = setInterval(() => {
+                    const diff = new Date() - postDussehraDate;
+                    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const s = Math.floor((diff % (1000 * 60)) / 1000);
+                    stopwatchEl.innerHTML = `Time since Dussehra: ${d}d ${h}h ${m}m ${s}s`;
+                }, 1000);
+            }
+
+            flowersBtn.addEventListener('click', () => {
+                for (let i = 0; i < 30; i++) {
+                    const petal = document.createElement('div');
+                    petal.className = 'flower-petal';
+                    petal.style.left = Math.random() * 100 + 'vw';
+                    petal.style.animationDuration = Math.random() * 3 + 4 + 's';
+                    petal.style.animationDelay = Math.random() * 2 + 's';
+                    petal.style.backgroundColor = `hsl(${Math.random() * 60 + 300}, 100%, 70%)`;
+                    petal.style.transform = `rotate(${Math.random() * 360}deg)`;
+                    document.body.appendChild(petal);
+                    setTimeout(() => petal.remove(), 7000);
+                }
+            });
+
+            blessedBtn.addEventListener('click', () => {
+                if (currentData) {
+                    blessingTitle.textContent = currentData.title;
+                    blessingMessage.textContent = currentData.blessing;
+                    blessingOverlay.style.display = 'flex';
+                }
+            });
+
+            closeBtn.addEventListener('click', closeMainPopup);
+            closeBlessingBtn.addEventListener('click', () => blessingOverlay.style.display = 'none');
+
+            showMainPopup();
+        })();
+    </script>
+
+    
         <style>
             
             body {
@@ -109,7 +432,7 @@ document.addEventListener('contextmenu', e => e.preventDefault());
       
       </script>
 
-          <div>
+         
 
                       <!-- Festive Popup (user-provided code integrated) -->
   <!-- Navaratri & Dussehra Popup | Dates: 22 Sept 2025 – 2 Oct 2025 -->
@@ -372,8 +695,7 @@ document.addEventListener('contextmenu', e => e.preventDefault());
     })();
   </script>
               
-          </div>
-        
+          
         
     </body>
     </html>
