@@ -397,39 +397,25 @@
 
                <h1> Here Is The Ping 🏓</h1>
 
-<div class="iframe-container">
-  <iframe 
-    src="https://deepdey-discord-bot.onrender.com/" 
-    frameborder="0" 
-    allow="clipboard-read; clipboard-write"
-    id="deepIframe"
-  ></iframe>
+<div style="position:relative; width:100%; height:400px;">
+  <iframe id="botIframe" src="https://deepdey-discord-bot.onrender.com/" 
+          style="width:100%; height:100%; border:0;"></iframe>
+  <!-- overlay to block right/middle clicks -->
+  <div id="iframeOverlay" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:10;"></div>
 </div>
 
-<style>
-  .iframe-container {
-    position: relative;
-    width: 100%;
-    height: 100vh; /* Adjust if needed */
-    overflow: hidden;
-  }
-
-  .iframe-container iframe {
-    width: 100%;
-    height: 100%;
-    pointer-events: none; /* makes iframe non-clickable */
-  }
-</style>
-
 <script>
-  // disable right click globally
-  document.addEventListener("contextmenu", (e) => e.preventDefault());
+const overlay = document.getElementById('iframeOverlay');
 
-  // allow only left click (disable middle/right click)
-  document.addEventListener("mousedown", (e) => {
-    if (e.button !== 0) e.preventDefault();
-  });
+// block right & middle click only
+overlay.addEventListener('mousedown', e => {
+    if(e.button !== 0) e.preventDefault(); // 0 = left click, allow it
+});
+
+// block context menu (right click menu)
+overlay.addEventListener('contextmenu', e => e.preventDefault());
 </script>
+
 
             
         </div>
