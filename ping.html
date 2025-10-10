@@ -394,27 +394,43 @@
         </script>
 
         <div>
-            <style>
-
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-}
-
-.full-size-iframe {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border: none;
-}
-
-                
-            </style>
 
                <h1> Here Is The Ping 🏓</h1>
 
-                <iframe src="https://deepdey-discord-bot.onrender.com/" class="full-size-iframe"></iframe>
+<div class="iframe-container">
+  <iframe 
+    src="https://deepdey-discord-bot.onrender.com/" 
+    frameborder="0" 
+    allow="clipboard-read; clipboard-write"
+    id="deepIframe"
+  ></iframe>
+</div>
+
+<style>
+  .iframe-container {
+    position: relative;
+    width: 100%;
+    height: 100vh; /* Adjust if needed */
+    overflow: hidden;
+  }
+
+  .iframe-container iframe {
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* makes iframe non-clickable */
+  }
+</style>
+
+<script>
+  // disable right click globally
+  document.addEventListener("contextmenu", (e) => e.preventDefault());
+
+  // allow only left click (disable middle/right click)
+  document.addEventListener("mousedown", (e) => {
+    if (e.button !== 0) e.preventDefault();
+  });
+</script>
+
             
         </div>
      
