@@ -420,16 +420,21 @@ def keep_alive():
 # Line ~405: GLOBAL VARIABLE DEFINITION
 BASE_DIR = Path(__file__).parent
 
-# --- GLOBAL CONFIGURATION (UPDATED) ---
-# Load environment variables for DISCORD_TOKEN and PREFIX only
+# --- GLOBAL CONFIGURATION (FIXED) ---
 load_dotenv(BASE_DIR / '.env')
 
-# HARDCODED FIX: Directly set the log channel ID as requested
-LOG_CHANNEL_ID = 1426420958222352496 # Set as an integer for Discord API compliance
+# 1. LOG_CHANNEL_ID (For Discord operations): Get from environment or use fallback integer.
+try:
+    LOG_CHANNEL_ID = int(os.getenv('LOG_CHANNEL_ID', '1426420958222352496'))
+except (TypeError, ValueError):
+    LOG_CHANNEL_ID = 1426420958222352496 
 
-# Load PREFIX from .env, defaulting to '!'
+# 2. LOG_FILE_DIR (For File Loggers): This must be a string/Path.
+LOG_FILE_DIR = str(BASE_DIR / 'log_files')
+
+# Load PREFIX once globally
 GLOBAL_PREFIX = os.getenv('PREFIX', '!')
-# --------------------------------------
+# ----------------------------
 
 # Line ~414: PASTE THE PREFIX FUNCTION HERE, AFTER GLOBAL_PREFIX IS DEFINED
 def get_prefix(bot, message):
@@ -451,14 +456,9 @@ class StudyBot(commands.Bot):
         self.start_time = None
         self.bg_task = None
         
-        # FIX FOR TypeError: ChatLogger.init() takes from 1 to 2 positional arguments but 3 were given
-        # This passes only the LOG_CHANNEL_ID.
-        self.chat_logger = ChatLogger(LOG_CHANNEL_ID)
-        self.mod_logger = ModLogger(LOG_CHANNEL_ID)
-        
-        # NOTE: If the loggers are expecting the bot object (self) *and* the channel ID, 
-        # you MUST change the definition in utils/chat_logger.py and utils/mod_logger.py 
-        # to: def __init__(self, bot, log_channel_id):
+        # FIX: ChatLogger and ModLogger likely require only a file path (string) for file logging.
+        self.chat_logger = ChatLogger(LOG_FILE_DIR)
+        self.mod_logger = ModLogger(LOG_FILE_DIR)
 
     async def setup_hook(self):
         # Called after the bot is logged in but before connect finishes; good for setup
@@ -675,8 +675,7 @@ async def load_cogs():
 
 
 async def main():
-    # Load .env file for DISCORD_TOKEN
-    load_dotenv(BASE_DIR / '.env') 
+    load_dotenv(BASE_DIR / '.env')
     token = os.getenv('DISCORD_TOKEN')
 
     if not token:
