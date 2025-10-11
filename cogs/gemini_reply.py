@@ -144,13 +144,18 @@ class GeminiReply(commands.Cog):
             print("[GEMINI] Settings check failed; skipping reply")
             return
 
-        # Call Gemini to generate a reply and send it
+       # Call Gemini to generate a reply and send it
         prompt = f"User: {content}\nAssistant:"  # simple persona
-        # Log to terminal
-        print(f"[GEMINI] Prompt for {message.author}: {content[:200]}")
-        reply = await self._call_gemini(prompt)
+        
+        # ADD THIS LINE: Start typing indicator immediately
+        async with message.channel.typing():
+            # Log to terminal
+            print(f"[GEMINI] Prompt for {message.author}: {content[:200]}")
+            reply = await self._call_gemini(prompt)
+
         # Avoid sending extremely long replies
         if len(reply) > 1900:
+            # ...
             reply = reply[:1900] + '...'
         try:
             await message.channel.send(reply)
