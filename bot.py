@@ -447,15 +447,16 @@ class StudyBot(commands.Bot):
         )
         self.start_time = None
         self.bg_task = None
-        # FIX: Adjusted the ChatLogger and ModLogger initialization to only pass the Channel ID
-        # or the bot instance based on the common fix for this type of error (i.e., only one custom argument is expected).
-        # The original code was: self.chat_logger = ChatLogger(self, LOG_CHANNEL_ID)
-        # Assuming the logger classes only take the bot object (self) OR the channel ID, but not both.
-        # If both are required, you must update ChatLogger/ModLogger.__init__
-        self.chat_logger = ChatLogger(self, LOG_CHANNEL_ID)
-        self.mod_logger = ModLogger(self, LOG_CHANNEL_ID)
-        # Note: If the loggers require BOTH the bot and the ID,
-        # you need to ensure ChatLogger/ModLogger are defined as: def __init__(self, bot, log_channel_id):
+        
+        # FIX FOR TypeError: ChatLogger.init() takes from 1 to 2 positional arguments but 3 were given
+        # The previous attempt passed (self, LOG_CHANNEL_ID) which counted as 3 arguments.
+        # This fix passes only the LOG_CHANNEL_ID, resulting in 2 arguments total (1 implicit, 1 explicit).
+        self.chat_logger = ChatLogger(LOG_CHANNEL_ID)
+        self.mod_logger = ModLogger(LOG_CHANNEL_ID)
+        
+        # NOTE: If the loggers are expecting the bot object (self) *and* the channel ID, 
+        # you MUST change the definition in utils/chat_logger.py and utils/mod_logger.py 
+        # to: def __init__(self, bot, log_channel_id):
 
     async def setup_hook(self):
         # Called after the bot is logged in but before connect finishes; good for setup
