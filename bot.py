@@ -605,7 +605,7 @@ class StudyBot(commands.Bot):
             print('Failed to sync app commands:', e)
             await ctx.send(f'Failed to sync commands: {str(e)}')
 
-     async def status_update_task(self):
+    async def status_update_task(self):
         await self.wait_until_ready()
         # Timers:
         # - ping_refresh every 15s (updates ping/uptime text)
