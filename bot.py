@@ -605,25 +605,25 @@ class StudyBot(commands.Bot):
             print('Failed to sync app commands:', e)
             await ctx.send(f'Failed to sync commands: {str(e)}')
 
-    async def status_update_task(self):
+     async def status_update_task(self):
         await self.wait_until_ready()
         # Timers:
-        # - ping_refresh every 7s (updates ping/uptime text)
-        # - swap activities every 3s (changes presence between ping and credit)
-        # - terminal log every 15s
+        # - ping_refresh every 15s (updates ping/uptime text)
+        # - swap activities every 4s (changes presence between ping and credit)
+        # - terminal log every 60s
         ping_activity = discord.Game(name="Ping: 0ms | Uptime: 0:00:00")
         credit_activity = discord.Game(name="Made With 🩷 Deep | deepdeyiitk.com")
 
-        last_ping_refresh = time.monotonic() - 7
-        last_terminal_log = time.monotonic() - 15
+        last_ping_refresh = time.monotonic() - 15  # Initialize to ensure immediate refresh
+        last_terminal_log = time.monotonic() - 60
         show_ping = True
 
         while not self.is_closed():
             try:
                 now = time.monotonic()
 
-                # Refresh ping/uptime every 7 seconds
-                if now - last_ping_refresh >= 7:
+                # Refresh ping/uptime every 15 seconds
+                if now - last_ping_refresh >= 15:
                     latency = round(self.latency * 1000) if self.latency is not None else 0
                     uptime_secs = int(time.time() - (self.start_time or time.time()))
                     uptime = str(datetime.timedelta(seconds=uptime_secs))
@@ -636,8 +636,8 @@ class StudyBot(commands.Bot):
                 else:
                     await self.change_presence(activity=credit_activity)
 
-                # Terminal logging every 15 seconds (log same status)
-                if now - last_terminal_log >= 15:
+                # Terminal logging every 60 seconds (log same status)
+                if now - last_terminal_log >= 60:
                     # use the current ping_activity name for logging
                     try:
                         log_text = ping_activity.name
@@ -646,13 +646,63 @@ class StudyBot(commands.Bot):
                     print(f"[STATUS LOG] {log_text}")
                     last_terminal_log = now
 
-                # flip the activity and wait 3 seconds before next swap
+                # flip the activity and wait 4 seconds before next swap (THIS CONTROLS THE SPEED)
                 show_ping = not show_ping
-                await asyncio.sleep(3)
+                await asyncio.sleep(4) 
 
             except Exception as e:
                 print(f"Error in status update task: {e}")
-                await asyncio.sleep(3)
+                await asyncio.sleep(4)
+
+    
+   ### async def status_update_task(self):
+   ###     await self.wait_until_ready()
+        # Timers:
+        # - ping_refresh every 7s (updates ping/uptime text)
+        # - swap activities every 3s (changes presence between ping and credit)
+        # - terminal log every 15s
+     ###   ping_activity = discord.Game(name="Ping: 0ms | Uptime: 0:00:00")
+        ### credit_activity = discord.Game(name="Made With 🩷 Deep | deepdeyiitk.com")
+
+     ###   last_ping_refresh = time.monotonic() - 7
+     ###   last_terminal_log = time.monotonic() - 15
+     ###   show_ping = True
+
+    ###    while not self.is_closed():
+     ###       try:
+      ###          now = time.monotonic()
+
+                # Refresh ping/uptime every 7 seconds
+        ###        if now - last_ping_refresh >= 7:
+        ###            latency = round(self.latency * 1000) if self.latency is not None else 0
+         ###           uptime_secs = int(time.time() - (self.start_time or time.time()))
+         ###           uptime = str(datetime.timedelta(seconds=uptime_secs))
+         ###           ping_activity = discord.Game(name=f"Ping: {latency}ms | Uptime: {uptime}")
+         ###           last_ping_refresh = now
+
+                # Set presence depending on toggle
+        ###        if show_ping:
+       ###             await self.change_presence(activity=ping_activity)
+       ###         else:
+        ###            await self.change_presence(activity=credit_activity)
+
+                # Terminal logging every 15 seconds (log same status)
+        ###        if now - last_terminal_log >= 15:
+                    # use the current ping_activity name for logging
+          ###          try:
+           ###             log_text = ping_activity.name
+             ###       except Exception:
+           ###             log_text = "Ping: N/A | Uptime: N/A | Made With 🩷 Deep | deepdeyiitk.com"
+             ###       print(f"[STATUS LOG] {log_text}")
+             ###       last_terminal_log = now
+
+                # flip the activity and wait 3 seconds before next swap
+            ######    show_ping = not show_ping
+           ######     await asyncio.sleep(3)
+
+        ###    except Exception as e:
+        ###        print(f"Error in status update task: {e}")
+         ###       await asyncio.sleep(3)
 
 
 bot = StudyBot()
