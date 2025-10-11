@@ -438,3 +438,42 @@ Tips:
 
 For more advanced deployment (Heroku, Docker, VPS), I can add example workflows or Dockerfiles on request.
 
+---
+<div align="center"> 
+  
+ [![Deep's GitHub stats](https://github-readme-stats.vercel.app/api?username=deepdeyiitgn&show_icons=true)](https://github.com/deepdeyiitgn/deepdey-discord_bot/)
+</div>
+
+---
+<div align="center"> 
+  
+  [![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=deepdeyiitgn&layout=pie)](https://github.com/deepdeyiitgn)
+</div>
+
+---
+<div align="center"> 
+  
+  [![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=deepdeyiitgn&stats_format=bytes)](https://deepdeyiitk.com/)
+</div>
+
+---
+<div align="center"> 
+  
+<p align="center">
+ 
+  <img src="https://komarev.com/ghpvc/?username=deepdeyiitgn" alt="deepdeyiitgn's profile views" />
+</p>
+</div>
+
+
+<p align="center">
+  <em>Made with ❤️, AI power, and relentless focus by <b>Deep Dey</b></em>
+</p>
+
+
+
+<div align="center"> 
+  
+  [![](https://raw.githubusercontent.com/Anuj579/Anuj579/output/github-contribution-grid-snake-dark.svg)](https://deepdeyiitk.com/)
+</div>
+
