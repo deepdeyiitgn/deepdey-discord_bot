@@ -59,13 +59,14 @@ class Quotes(commands.Cog):
         await async_save_json(DATA_PATH, data)
         await ctx.send('Quote added.')
 
-    @app_commands.command(name='addquote', description='Add a quote to the quote bank')
-    async def slash_addquote(self, interaction: discord.Interaction, quote: str):
-        await interaction.response.defer(ephemeral=True)
-        data = await async_load_json(DATA_PATH, default=self.data)
-        data.setdefault('quotes', []).append(quote)
-        await async_save_json(DATA_PATH, data)
-        await interaction.followup.send('Quote added.', ephemeral=True)
+    # REMOVE THIS ENTIRE BLOCK from quotes.py
+   # @app_commands.command(name='addquote', description='Add a quote to the quote bank')
+   # async def slash_addquote(self, interaction: discord.Interaction, quote: str):
+   #     await interaction.response.defer(ephemeral=True)
+     #   data = await async_load_json(DATA_PATH, default=self.data)
+      #  data.setdefault('quotes', []).append(quote)
+      #  await async_save_json(DATA_PATH, data)
+      #  await interaction.followup.send('Quote added.', ephemeral=True)
 
     @commands.command(name='listquotes')
     async def list_quotes(self, ctx):
