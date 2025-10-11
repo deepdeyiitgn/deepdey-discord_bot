@@ -441,8 +441,8 @@ class StudyBot(commands.Bot):
         )
         self.start_time = None
         self.bg_task = None
-        self.chat_logger = ChatLogger()
-        self.mod_logger = ModLogger()
+        self.chat_logger = ChatLogger(self, LOG_CHANNEL_ID)
+        self.mod_logger = ModLogger(self, LOG_CHANNEL_ID)
 
     async def setup_hook(self):
         # Called after the bot is logged in but before connect finishes; good for setup
@@ -708,7 +708,9 @@ class StudyBot(commands.Bot):
 bot = StudyBot()
 
 # Optional: configure logging channel id via env
-LOG_CHANNEL_ID = None
+load_dotenv(BASE_DIR / '.env')
+# We now read the channel ID from your environment/config.
+LOG_CHANNEL_ID = os.getenv('LOG_CHANNEL_ID')
 
 
 @bot.event
