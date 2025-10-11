@@ -417,15 +417,20 @@ def keep_alive():
     t.start()
 
 
-
-
+# Line ~405: GLOBAL VARIABLE DEFINITION
 BASE_DIR = Path(__file__).parent
 
+# --- GLOBAL CONFIGURATION ---
+load_dotenv(BASE_DIR / '.env')
+LOG_CHANNEL_ID = os.getenv('LOG_CHANNEL_ID')
+# Load PREFIX once globally
+GLOBAL_PREFIX = os.getenv('PREFIX', '!')
+# ----------------------------
 
+# Line ~414: PASTE THE PREFIX FUNCTION HERE, AFTER GLOBAL_PREFIX IS DEFINED
 def get_prefix(bot, message):
-    load_dotenv(BASE_DIR / '.env')
-    # Default to ! if no prefix set in .env
-    return os.getenv('PREFIX', '!')
+    # This now correctly uses the globally defined variable
+    return GLOBAL_PREFIX
 
 
 intents = discord.Intents.all()
