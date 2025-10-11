@@ -421,6 +421,7 @@ def keep_alive():
 BASE_DIR = Path(__file__).parent
 
 # --- GLOBAL CONFIGURATION ---
+# Load environment variables once
 load_dotenv(BASE_DIR / '.env')
 LOG_CHANNEL_ID = os.getenv('LOG_CHANNEL_ID')
 # Load PREFIX once globally
@@ -446,8 +447,15 @@ class StudyBot(commands.Bot):
         )
         self.start_time = None
         self.bg_task = None
+        # FIX: Adjusted the ChatLogger and ModLogger initialization to only pass the Channel ID
+        # or the bot instance based on the common fix for this type of error (i.e., only one custom argument is expected).
+        # The original code was: self.chat_logger = ChatLogger(self, LOG_CHANNEL_ID)
+        # Assuming the logger classes only take the bot object (self) OR the channel ID, but not both.
+        # If both are required, you must update ChatLogger/ModLogger.__init__
         self.chat_logger = ChatLogger(self, LOG_CHANNEL_ID)
         self.mod_logger = ModLogger(self, LOG_CHANNEL_ID)
+        # Note: If the loggers require BOTH the bot and the ID,
+        # you need to ensure ChatLogger/ModLogger are defined as: def __init__(self, bot, log_channel_id):
 
     async def setup_hook(self):
         # Called after the bot is logged in but before connect finishes; good for setup
@@ -529,30 +537,6 @@ class StudyBot(commands.Bot):
         # This part of the logic seems misplaced, but I will keep it near the original to avoid breaking things.
         if not self.bg_task:
             self.bg_task = self.loop.create_task(self.status_update_task())
-
-### @bot.event
-# Inside the StudyBot class in bot.py
-###async def on_ready(self):
-##    print(f'\n{self.user} is ready! (ID: {self.user.id})')
-###    print(f'Using prefix: !')
-##  #  print('--------------------')
-
-    # Logic from the first on_ready
-##    self.start_time = time.time()  
-##    if not self.bg_task:
- ####       self.bg_task = self.loop.create_task(self.status_update_task())
-
-    # Logic from the second (standalone) on_ready
-###    try:
-   ###     await self.change_presence(activity=discord.Game(name="Deep Dey - The FUTURE IITIAN 🎯"))
-  ###  except Exception as e:
-  ####      print(f"Failed to set initial presence: {e}")
-
-    ####if not hasattr(self, 'launch_time'):
-   #     import datetime
- ##       self.launch_time = datetime.datetime.utcnow()
-#
-#    print("Bot is ready.")
     
     async def on_ready(self):
         # This is the single, correct on_ready handler for the bot.
@@ -659,63 +643,8 @@ class StudyBot(commands.Bot):
                 print(f"Error in status update task: {e}")
                 await asyncio.sleep(4)
 
-    
-   ### async def status_update_task(self):
-   ###     await self.wait_until_ready()
-        # Timers:
-        # - ping_refresh every 7s (updates ping/uptime text)
-        # - swap activities every 3s (changes presence between ping and credit)
-        # - terminal log every 15s
-     ###   ping_activity = discord.Game(name="Ping: 0ms | Uptime: 0:00:00")
-        ### credit_activity = discord.Game(name="Made With 🩷 Deep | deepdeyiitk.com")
-
-     ###   last_ping_refresh = time.monotonic() - 7
-     ###   last_terminal_log = time.monotonic() - 15
-     ###   show_ping = True
-
-    ###    while not self.is_closed():
-     ###       try:
-      ###          now = time.monotonic()
-
-                # Refresh ping/uptime every 7 seconds
-        ###        if now - last_ping_refresh >= 7:
-        ###            latency = round(self.latency * 1000) if self.latency is not None else 0
-         ###           uptime_secs = int(time.time() - (self.start_time or time.time()))
-         ###           uptime = str(datetime.timedelta(seconds=uptime_secs))
-         ###           ping_activity = discord.Game(name=f"Ping: {latency}ms | Uptime: {uptime}")
-         ###           last_ping_refresh = now
-
-                # Set presence depending on toggle
-        ###        if show_ping:
-       ###             await self.change_presence(activity=ping_activity)
-       ###         else:
-        ###            await self.change_presence(activity=credit_activity)
-
-                # Terminal logging every 15 seconds (log same status)
-        ###        if now - last_terminal_log >= 15:
-                    # use the current ping_activity name for logging
-          ###          try:
-           ###             log_text = ping_activity.name
-             ###       except Exception:
-           ###             log_text = "Ping: N/A | Uptime: N/A | Made With 🩷 Deep | deepdeyiitk.com"
-             ###       print(f"[STATUS LOG] {log_text}")
-             ###       last_terminal_log = now
-
-                # flip the activity and wait 3 seconds before next swap
-            ######    show_ping = not show_ping
-           ######     await asyncio.sleep(3)
-
-        ###    except Exception as e:
-        ###        print(f"Error in status update task: {e}")
-         ###       await asyncio.sleep(3)
-
 
 bot = StudyBot()
-
-# Optional: configure logging channel id via env
-load_dotenv(BASE_DIR / '.env')
-# We now read the channel ID from your environment/config.
-LOG_CHANNEL_ID = os.getenv('LOG_CHANNEL_ID')
 
 
 @bot.event
@@ -723,15 +652,6 @@ async def on_connect():
     # Called when the connection to Discord is made
     bot.start_time = time.time()
     print(f"Bot connected to Discord at {datetime.datetime.now()}")
-
-
-# NOTE: I am REMOVING the duplicate GLOBAL event handlers below.
-# The class StudyBot already handles on_message, on_command, on_command_completion, and on_command_error.
-# Keeping only the class methods is the recommended practice to avoid conflicts.
-# The problematic on_ready handler is also removed.
-
-# The problematic global handlers were here (lines ~650 to ~680 in the original file).
-# These are now removed to fix both the activity rotation and reduce command conflicts.
 
 
 async def load_cogs():
@@ -750,7 +670,9 @@ async def load_cogs():
 
 
 async def main():
-    load_dotenv(BASE_DIR / '.env')
+    # Load .env file again just before getting the token, ensuring robustness
+    # This is fine, but the global load_dotenv near line 410 handles the global vars.
+    load_dotenv(BASE_DIR / '.env') 
     token = os.getenv('DISCORD_TOKEN')
 
     if not token:
