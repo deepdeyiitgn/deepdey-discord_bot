@@ -654,18 +654,40 @@ async def on_command_error(ctx, error):
 
 
 @bot.event
-async def on_ready():
-    print(f"Logged in as {bot.user} (ID: {bot.user.id})")
-    # set a friendly presence
+# Inside the StudyBot class in bot.py
+async def on_ready(self):
+    print(f'\n{self.user} is ready! (ID: {self.user.id})')
+    print(f'Using prefix: !')
+    print('--------------------')
+
+    # Logic from the first on_ready
+    self.start_time = time.time()  
+    if not self.bg_task:
+        self.bg_task = self.loop.create_task(self.status_update_task())
+
+    # Logic from the second (standalone) on_ready
     try:
-        await bot.change_presence(activity=discord.Game(name="Deep Dey - The FUTURE IITIAN 🎯"))
-    except Exception:
-        pass
-    # record launch time
-    if not hasattr(bot, 'launch_time'):
+        await self.change_presence(activity=discord.Game(name="Deep Dey - The FUTURE IITIAN 🎯"))
+    except Exception as e:
+        print(f"Failed to set initial presence: {e}")
+
+    if not hasattr(self, 'launch_time'):
         import datetime
-        bot.launch_time = datetime.datetime.utcnow()
+        self.launch_time = datetime.datetime.utcnow()
+
     print("Bot is ready.")
+# async def on_ready():
+#    print(f"Logged in as {bot.user} (ID: {bot.user.id})")
+    # set a friendly presence
+#    try:
+  #      await bot.change_presence(activity=discord.Game(name="Deep Dey - The FUTURE IITIAN 🎯"))
+ #   except Exception:
+      #  pass
+    # record launch time
+ #   if not hasattr(bot, 'launch_time'):
+  #      import datetime
+  #      bot.launch_time = datetime.datetime.utcnow()
+   # print("Bot is ready.")
 
 
 @bot.event
