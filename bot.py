@@ -420,13 +420,16 @@ def keep_alive():
 # Line ~405: GLOBAL VARIABLE DEFINITION
 BASE_DIR = Path(__file__).parent
 
-# --- GLOBAL CONFIGURATION ---
-# Load environment variables once
+# --- GLOBAL CONFIGURATION (UPDATED) ---
+# Load environment variables for DISCORD_TOKEN and PREFIX only
 load_dotenv(BASE_DIR / '.env')
-LOG_CHANNEL_ID = os.getenv('LOG_CHANNEL_ID')
-# Load PREFIX once globally
+
+# HARDCODED FIX: Directly set the log channel ID as requested
+LOG_CHANNEL_ID = 1426420958222352496 # Set as an integer for Discord API compliance
+
+# Load PREFIX from .env, defaulting to '!'
 GLOBAL_PREFIX = os.getenv('PREFIX', '!')
-# ----------------------------
+# --------------------------------------
 
 # Line ~414: PASTE THE PREFIX FUNCTION HERE, AFTER GLOBAL_PREFIX IS DEFINED
 def get_prefix(bot, message):
@@ -449,8 +452,7 @@ class StudyBot(commands.Bot):
         self.bg_task = None
         
         # FIX FOR TypeError: ChatLogger.init() takes from 1 to 2 positional arguments but 3 were given
-        # The previous attempt passed (self, LOG_CHANNEL_ID) which counted as 3 arguments.
-        # This fix passes only the LOG_CHANNEL_ID, resulting in 2 arguments total (1 implicit, 1 explicit).
+        # This passes only the LOG_CHANNEL_ID.
         self.chat_logger = ChatLogger(LOG_CHANNEL_ID)
         self.mod_logger = ModLogger(LOG_CHANNEL_ID)
         
@@ -656,6 +658,9 @@ async def on_connect():
 
 
 async def load_cogs():
+    # ADDED DIAGNOSTIC PRINT
+    print("Attempting to load cogs from the 'cogs' directory...") 
+    
     # Load all cogs in the cogs package
     for file in (BASE_DIR / 'cogs').glob('*.py'):
         if file.name.startswith('_'):
@@ -665,14 +670,12 @@ async def load_cogs():
             await bot.load_extension(ext)
             print(f"Loaded extension {ext}")
         except Exception as e:
-            # IMPORTANT: The CommandRegistrationError is still possible here if the duplicate 'gemini' 
-            # command is in another COG. If this error persists, you must check all COG files.
+            # THIS PRINT IS CRITICAL: it will show exactly which file failed and why.
             print(f"Failed to load extension {ext}: {e}")
 
 
 async def main():
-    # Load .env file again just before getting the token, ensuring robustness
-    # This is fine, but the global load_dotenv near line 410 handles the global vars.
+    # Load .env file for DISCORD_TOKEN
     load_dotenv(BASE_DIR / '.env') 
     token = os.getenv('DISCORD_TOKEN')
 
