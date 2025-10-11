@@ -30,10 +30,7 @@ def home():
         <title>Bot Status🏓 || deepdeyiitk.com || Last updated: 09/10/2025 ~ 22:11:55 pm</title>
         <link rel="icon" type="image/png" href="https://i.postimg.cc/YSV9JqBD/Neon-Green-Circle-Frame-Fitness-You-Tube-Profile-Picturedurga-puja.png">
 
-         <!-- Navaratri & Dussehra Popup | Dates: 22 Sept 2025 – 2 Oct 2025 -->
-
-
-<div>
+         <div>
   
   <div id="festive-popup-container">
   <div id="festive-popup-overlay">
@@ -477,6 +474,7 @@ class StudyBot(commands.Bot):
                 message.channel,
                 message.guild
             )
+            print(f"[USER] {message.author}: {message.content}") # Added terminal print
         elif message.author == self.user:
             # Log bot's own messages
             self.chat_logger.log_message(
@@ -486,6 +484,7 @@ class StudyBot(commands.Bot):
                 message.guild,
                 is_bot=True
             )
+            print(f"[BOT] {message.author}: {message.content}") # Added terminal print
         
         await super().on_message(message)
         
@@ -522,14 +521,47 @@ class StudyBot(commands.Bot):
                     )
         except Exception as e:
             print(f'Error logging timeout: {e}')
+        # This part of the logic seems misplaced, but I will keep it near the original to avoid breaking things.
         if not self.bg_task:
             self.bg_task = self.loop.create_task(self.status_update_task())
 
+### @bot.event
+# Inside the StudyBot class in bot.py
+###async def on_ready(self):
+##    print(f'\n{self.user} is ready! (ID: {self.user.id})')
+###    print(f'Using prefix: !')
+##  #  print('--------------------')
+
+    # Logic from the first on_ready
+##    self.start_time = time.time()  
+##    if not self.bg_task:
+ ####       self.bg_task = self.loop.create_task(self.status_update_task())
+
+    # Logic from the second (standalone) on_ready
+###    try:
+   ###     await self.change_presence(activity=discord.Game(name="Deep Dey - The FUTURE IITIAN 🎯"))
+  ###  except Exception as e:
+  ####      print(f"Failed to set initial presence: {e}")
+
+    ####if not hasattr(self, 'launch_time'):
+   #     import datetime
+ ##       self.launch_time = datetime.datetime.utcnow()
+#
+#    print("Bot is ready.")
+    
     async def on_ready(self):
+        # This is the single, correct on_ready handler for the bot.
         print(f'\n{self.user} is ready!')
         print(f'Using prefix: !')
         print('--------------------')
         self.start_time = time.time()  # Set the start time when bot becomes ready
+        
+        # Set a friendly presence (this will be immediately overridden by the rotating task)
+        try:
+            await self.change_presence(activity=discord.Game(name="Deep Dey - The FUTURE IITIAN 🎯"))
+        except Exception:
+            pass
+            
         # Always start the status update task when the bot is ready
         if not self.bg_task:
             self.bg_task = self.loop.create_task(self.status_update_task())
@@ -541,16 +573,24 @@ class StudyBot(commands.Bot):
             await ctx.send("You don't have permission to use this command.")
         elif isinstance(error, commands.MissingRequiredArgument):
             await ctx.send(f"Missing required argument: {error.param.name}")
+        elif isinstance(error, commands.CheckFailure): # Added to handle checks from the global handler
+             await ctx.send("You don't have permission to use that command.")
         else:
             print(f'Error in command {getattr(ctx, "command", None)}: {error}')
             try:
                 await ctx.send(f'Error executing command: {error}')
             except Exception:
                 pass
+            raise error # Re-raise for traceback
 
     async def on_command(self, ctx):
         print(f'Command executed: {ctx.command} by {ctx.author} in {ctx.guild}')
         await self.chat_logger.log_command(ctx)
+
+    async def on_command_completion(self, ctx):
+        print(f"[COMMAND COMPLETED] {ctx.command} by {ctx.author}")
+        self.chat_logger.log_message(ctx.author, f"Completed command: {ctx.command}", ctx.channel, ctx.guild, "COMMAND_COMPLETE")
+
 
     @commands.hybrid_command(name='sync', description='Sync slash commands (Admin only)')
     @commands.has_permissions(administrator=True)
@@ -627,79 +667,14 @@ async def on_connect():
     bot.start_time = time.time()
     print(f"Bot connected to Discord at {datetime.datetime.now()}")
 
-@bot.event
-async def on_message(message):
-    if message.author == bot.user:
-        print(f"[BOT] {message.author}: {message.content}")
-        bot.chat_logger.log_message(message.author, message.content, message.channel, message.guild, "BOT")
-    else:
-        print(f"[USER] {message.author}: {message.content}")
-        bot.chat_logger.log_message(message.author, message.content, message.channel, message.guild, "USER")
-    await bot.process_commands(message)
 
-@bot.event
-async def on_command(ctx):
-    print(f"[COMMAND] {ctx.author} used {ctx.command} in {ctx.channel}")
-    bot.chat_logger.log_command(ctx, ctx.command.name)
+# NOTE: I am REMOVING the duplicate GLOBAL event handlers below.
+# The class StudyBot already handles on_message, on_command, on_command_completion, and on_command_error.
+# Keeping only the class methods is the recommended practice to avoid conflicts.
+# The problematic on_ready handler is also removed.
 
-@bot.event
-async def on_command_completion(ctx):
-    print(f"[COMMAND COMPLETED] {ctx.command} by {ctx.author}")
-    bot.chat_logger.log_message(ctx.author, f"Completed command: {ctx.command}", ctx.channel, ctx.guild, "COMMAND_COMPLETE")
-
-@bot.event
-async def on_command_error(ctx, error):
-    print(f"[ERROR] {ctx.command}: {str(error)}")
-    bot.chat_logger.log_error(error, f"Command: {ctx.command} by {ctx.author} in {ctx.channel}")
-
-
-@bot.event
-# Inside the StudyBot class in bot.py
-async def on_ready(self):
-    print(f'\n{self.user} is ready! (ID: {self.user.id})')
-    print(f'Using prefix: !')
-    print('--------------------')
-
-    # Logic from the first on_ready
-    self.start_time = time.time()  
-    if not self.bg_task:
-        self.bg_task = self.loop.create_task(self.status_update_task())
-
-    # Logic from the second (standalone) on_ready
-    try:
-        await self.change_presence(activity=discord.Game(name="Deep Dey - The FUTURE IITIAN 🎯"))
-    except Exception as e:
-        print(f"Failed to set initial presence: {e}")
-
-    if not hasattr(self, 'launch_time'):
-        import datetime
-        self.launch_time = datetime.datetime.utcnow()
-
-    print("Bot is ready.")
-# async def on_ready():
-#    print(f"Logged in as {bot.user} (ID: {bot.user.id})")
-    # set a friendly presence
-#    try:
-  #      await bot.change_presence(activity=discord.Game(name="Deep Dey - The FUTURE IITIAN 🎯"))
- #   except Exception:
-      #  pass
-    # record launch time
- #   if not hasattr(bot, 'launch_time'):
-  #      import datetime
-  #      bot.launch_time = datetime.datetime.utcnow()
-   # print("Bot is ready.")
-
-
-@bot.event
-async def on_command_error(ctx, error):
-    # Generic error handler for commands
-    if isinstance(error, commands.CommandNotFound):
-        return
-    if isinstance(error, commands.CheckFailure):
-        await ctx.send("You don't have permission to use that command.")
-        return
-    await ctx.send(f'Error: {error}')
-    raise error
+# The problematic global handlers were here (lines ~650 to ~680 in the original file).
+# These are now removed to fix both the activity rotation and reduce command conflicts.
 
 
 async def load_cogs():
@@ -712,6 +687,8 @@ async def load_cogs():
             await bot.load_extension(ext)
             print(f"Loaded extension {ext}")
         except Exception as e:
+            # IMPORTANT: The CommandRegistrationError is still possible here if the duplicate 'gemini' 
+            # command is in another COG. If this error persists, you must check all COG files.
             print(f"Failed to load extension {ext}: {e}")
 
 
