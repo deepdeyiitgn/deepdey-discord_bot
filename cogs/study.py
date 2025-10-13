@@ -1,4 +1,11 @@
-"""Study cog: /log and /logs view commands to record study sessions and view history."""
+"""
+Study cog: /log and /logs view commands to record study sessions and view history.
+
+Features:
+- Log study sessions
+- View study logs
+- Track streaks and progress
+"""
 import discord
 from discord.ext import commands
 from discord import app_commands

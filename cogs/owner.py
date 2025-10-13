@@ -12,13 +12,12 @@ class Owner(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.hybrid_command(name='restart', description='Restart the bot and reload all files')
+    @commands.hybrid_command(name='bot_restart', description='Restart the bot and reload all files')
     @commands.is_owner()
-    async def restart(self, ctx):
+    async def bot_restart(self, ctx):
         """Restart the bot and reload all files (Owner only)"""
         try:
             await ctx.send("🔄 Restarting bot and reloading all files...")
-            
             # Reload all cogs
             for extension in list(self.bot.extensions):
                 try:
@@ -26,12 +25,9 @@ class Owner(commands.Cog):
                 except Exception as e:
                     await ctx.send(f"❌ Error reloading {extension}: {e}")
                     return
-
             # Sync commands
             await self.bot.tree.sync()
-            
             await ctx.send("✅ Bot restarted and all files reloaded successfully!")
-            
         except Exception as e:
             await ctx.send(f"❌ Error during restart: {e}")
 

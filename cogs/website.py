@@ -152,21 +152,20 @@ class Website(commands.Cog):
         """Update website statistics periodically."""
         try:
             # Get total study sessions
-            stats['study_sessions'] = await db.DB.fetchone(
-                'SELECT COUNT(*) as count FROM study_logs'
-            )['count']
-            
+            row = await db.DB.fetchone('SELECT COUNT(*) as count FROM study_logs')
+            stats['study_sessions'] = row['count'] if row else 0
+
             # Get total minutes studied
-            stats['total_study_minutes'] = await db.DB.fetchone(
-                'SELECT SUM(minutes) as total FROM study_logs'
-            )['total'] or 0
-            
+            row = await db.DB.fetchone('SELECT SUM(minutes) as total FROM study_logs')
+            stats['total_study_minutes'] = row['total'] if row and row['total'] else 0
+
             # Get active users (studied in last 24h)
             day_ago = int(time.time() - (24 * 60 * 60))
-            stats['active_users'] = await db.DB.fetchone(
+            row = await db.DB.fetchone(
                 'SELECT COUNT(DISTINCT user_id) as count FROM study_logs WHERE ts >= ?',
                 (day_ago,)
-            )['count']
+            )
+            stats['active_users'] = row['count'] if row else 0
             
             # Save updated stats
             self._save_stats()

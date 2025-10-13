@@ -109,11 +109,16 @@ class Games(commands.Cog):
     async def load_data(self):
         try:
             self.data = await async_load_json(DATA_PATH)
+            # Ensure all required keys exist
             if 'game_scores' not in self.data:
                 self.data['game_scores'] = {}
-                await async_save_json(DATA_PATH, self.data)
+            if 'leaderboard' not in self.data:
+                self.data['leaderboard'] = {}
+            if 'quiz_history' not in self.data:
+                self.data['quiz_history'] = {}
+            await async_save_json(DATA_PATH, self.data)
         except FileNotFoundError:
-            self.data = {'game_scores': {}}
+            self.data = {'leaderboard': {}, 'game_scores': {}, 'quiz_history': {}}
             await async_save_json(DATA_PATH, self.data)
 
     async def update_score(self, user_id: int, game: str, score: int):
@@ -426,7 +431,7 @@ class Games(commands.Cog):
         
         await ctx.send(embed=embed)
         
-    @commands.hybrid_command(name='leaderboard', description='Show game leaderboards')
+    @commands.hybrid_command(name='game_leaderboard', description='Show game leaderboards')
     async def show_leaderboard(self, ctx: commands.Context, game: str = None):
         """Show the leaderboard for all games or a specific game"""
         if not self.data['game_scores']:
