@@ -8,6 +8,7 @@ import sys
 import os
 import time
 import datetime
+from dotenv import load_dotenv
 from pathlib import Path
 import discord
 from discord.ext import commands

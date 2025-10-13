@@ -113,6 +113,7 @@ class Games(commands.Cog):
                 self.data['game_scores'] = {}
                 await async_save_json(DATA_PATH, self.data)
         except FileNotFoundError:
+            self.data = {'game_scores': {}}
             await async_save_json(DATA_PATH, self.data)
 
     async def update_score(self, user_id: int, game: str, score: int):

@@ -97,13 +97,21 @@ async def setup(bot: commands.Bot):
     await bot.add_cog(Study(bot))
 """Study cog
 
-Provides core study features: Pomodoro focus timer, daily study logs, streaks,
-leaderboard, doubt collector, and motivate command which delegates to the
-existing Gemini integration when available.
-
-Storage: uses utils.db.DB key/value store. Keys are namespaced per guild/user.
-"""
 from __future__ import annotations
+
+"""Study cog for managing study-related features.
+
+Provides core study features:
+- Pomodoro focus timer
+- Daily study logs
+- Study streaks
+- Leaderboard
+- Doubt collector
+- Motivate command (uses Gemini when available)
+
+Storage:
+Uses utils.db.DB key/value store with guild/user namespaced keys.
+"""
 
 import asyncio
 import datetime
