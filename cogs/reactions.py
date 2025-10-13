@@ -19,6 +19,11 @@ REACTION_EMOJIS = [
     # Discord Animated Emojis (these will be populated from the bot's guilds)
     "<a:loading:1234567890>",  # Will be replaced with actual emoji IDs
     "<a:boost:1234567891>",
+    "<:Gemini_Generated_Image_buccukbuc:1427226120125943878>",
+    "<:bluemaximalistwinterwonderlandba:1427226002555146360>",
+    "<:An_HtWVSiXRkVhAQwnzxTTlDxJf6fSRg:1424005104972988547>",
+    "<:65155711dce8135d31068666_1695897:1424005082256769045>",
+    "<:NeonGreenCircleFrameFitnessYouTu:1424005045556609034>",
     "<a:verified:1234567892>",
     "<a:typing:1234567893>",
     "<a:party_blob:1234567894>",
