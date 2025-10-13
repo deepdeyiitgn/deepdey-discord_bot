@@ -21,10 +21,10 @@ class Extras(commands.Cog):
 
     @commands.hybrid_command(name='uptime', help='Show bot uptime')
     async def uptime(self, ctx: commands.Context):
-        if not hasattr(self.bot, 'launch_time'):
+        if not hasattr(self.bot, 'start_time'):
             await ctx.send('Uptime unknown')
             return
-        delta = datetime.datetime.utcnow() - self.bot.launch_time
+        delta = datetime.datetime.utcnow() - datetime.datetime.utcfromtimestamp(self.bot.start_time)
         await ctx.send(f'Uptime: {str(delta).split(".")[0]}')
 
     @commands.hybrid_command(name='serverinfo', help='Show server information')
