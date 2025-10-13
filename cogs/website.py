@@ -60,6 +60,10 @@ class Website(commands.Cog):
 
     def _run_flask(self):
         """Run the Flask server."""
+        @app.route('/')
+        def root():
+            return "<html><body><h1>DeepDey Discord Bot - Status</h1><p>Service is running.</p></body></html>"
+
         @app.route('/api/stats')
         def get_stats():
             return jsonify({

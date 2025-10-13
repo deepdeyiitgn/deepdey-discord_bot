@@ -67,68 +67,20 @@ class Study(commands.Cog):
                     streak_msg = "Starting a new streak today! 💪"
             else:
                 streak_msg = f"Current streak: {streak['count']} days 🔥"
-
-        # Update leaderboard if in a guild
-        guild_id = ctx.guild.id if ctx.guild else None
-        if guild_id:
-            await db.DB.increment_leaderboard(guild_id, ctx.author.id, minutes)
-
-        await ctx.send(f'Logged {minutes} minutes for {subject or "(no subject)"} — topic: {topic}\n{streak_msg}')
-
-    @commands.hybrid_command(name='logs')
-    async def logs(self, ctx, action: str = None):
-        """View logs: !logs view"""
-        if action == 'view':
-            rows = await db.DB.get_user_logs(ctx.author.id)
-            if not rows:
-                await ctx.send('No study logs found.')
-                return
-            lines = []
-            total = 0
-            for r in rows[:10]:
-                ts = int(r['ts'])
-                minutes = int(r['minutes'])
-                topic = r['topic'] or ''
-                total += minutes
-                lines.append(f'- {minutes} min — {topic} — <t:{ts}:f>')
-            lines.append(f'**Total minutes:** {total}')
-            await ctx.send('\n'.join(lines))
-            return
-        await ctx.send('Usage: logs view')
-
-
-
-
-async def setup(bot: commands.Bot):
-    await db.DB.init_db()
-    await bot.add_cog(Study(bot))
-"""Study cog
-
-from __future__ import annotations
-
-"""Study cog for managing study-related features.
-
-Provides core study features:
-- Pomodoro focus timer
-- Daily study logs
-- Study streaks
-- Leaderboard
-- Doubt collector
-- Motivate command (uses Gemini when available)
-
-Storage:
-Uses utils.db.DB key/value store with guild/user namespaced keys.
 """
-
+Study cog: log and logs commands, simple focus session, streaks and leaderboard helpers.
+This is a cleaned, single-version implementation to avoid duplicated code and unterminated strings.
+"""
+import time
 import asyncio
 import datetime
 import json
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any
 from pathlib import Path
 
-from discord.ext import commands, tasks
-from discord import app_commands
 import discord
+from discord.ext import commands
+from discord import app_commands
 
 from utils.db import DB
 
@@ -140,132 +92,68 @@ def _now_ts() -> int:
 class Study(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        # in-memory active focus sessions: {user_id: {guild_id, channel_id, ends_at, duration_minutes}}
         self.active_focus: Dict[int, Dict[str, Any]] = {}
-        # background task to check timers
+
+    @commands.hybrid_command(name='log')
+    async def log(self, ctx, *, args: str = ''):
+        """Log a study session: !log subject:math time:120 topic:integration"""
+        parts = {}
+        for token in args.split():
+            if ':' in token:
+                k, v = token.split(':', 1)
+                parts[k.lower()] = v
+        subject = parts.get('subject', '')
+        time_str = parts.get('time', '')
+        topic = parts.get('topic', '')
+        minutes = 0
         try:
-            self._checker_task = self.bot.loop.create_task(self._focus_checker())
-        except Exception:
-            # older event loop contexts or testing environment may not allow create_task here
-            self._checker_task = None
-        # reminders task
-        try:
-            self._reminder_task = self.bot.loop.create_task(self._reminder_dispatcher())
-        except Exception:
-            self._reminder_task = None
-        # study partner sessions: {channel_id: {owner, ends_at, interval_mins, next_ping_ts}}
-        self.active_partners: Dict[int, Dict[str, Any]] = {}
-        try:
-            self._partner_task = self.bot.loop.create_task(self._partner_checker())
-        except Exception:
-            self._partner_task = None
-        # daily quote task
-        try:
-            self._quote_task = self.bot.loop.create_task(self._daily_quote_task())
-        except Exception:
-            self._quote_task = None
-
-    def cog_unload(self):
-        try:
-            self._checker_task.cancel()
-        except Exception:
-            pass
-
-    # ------------------ Helpers (DB keys) ------------------
-    @staticmethod
-    def _log_key(user_id: int, date_str: str) -> str:
-        return f'studylog_{user_id}_{date_str}'
-
-    @staticmethod
-    def _streak_key(user_id: int) -> str:
-        return f'streak_{user_id}'
-
-    @staticmethod
-    def _doubt_key(guild_id: int) -> str:
-        return f'doubts_{guild_id}'
-
-    @staticmethod
-    def _leaderboard_key(guild_id: int) -> str:
-        return f'leaderboard_{guild_id}'
-
-    # ------------------ Focus / Pomodoro ------------------
-    @commands.hybrid_command(name='focus', description='Start or stop a Pomodoro focus session')
-    @app_commands.describe(action='start or stop', duration='duration in minutes (start only)')
-    async def focus(self, ctx: commands.Context, action: str, duration: Optional[int] = 25):
-        action = (action or '').lower()
-        user_id = ctx.author.id
-        guild_id = ctx.guild.id if ctx.guild else 0
-        channel_id = ctx.channel.id
-
-        if action == 'start':
-            # create session
-            ends_at = _now_ts() + int(duration) * 60
-            self.active_focus[user_id] = {
-                'guild_id': guild_id,
-                'channel_id': channel_id,
-                'ends_at': ends_at,
-                'duration': int(duration)
-            }
-            # expose to bot for web sync
-            setattr(self.bot, 'active_focus_sessions', self.active_focus)
-
-            await ctx.send(f'⏱️ Focus started for {duration} minutes. I will remind you when time is up.')
-            try:
-                await ctx.author.send(f'🧠 Focus started for {duration} minutes. Good luck!')
-            except Exception:
-                pass
-
-        elif action == 'stop':
-            if user_id in self.active_focus:
-                sess = self.active_focus.pop(user_id)
-                setattr(self.bot, 'active_focus_sessions', self.active_focus)
-                await ctx.send('🛑 Focus session stopped. Well done!')
-                # credit partial time to today's log
-                elapsed = max(1, int(sess.get('duration', 25)))
-                await self._add_log(ctx.author.id, elapsed, 'focus')
+            if time_str.endswith('h'):
+                minutes = int(float(time_str[:-1]) * 60)
+            elif time_str.endswith('m'):
+                minutes = int(float(time_str[:-1]))
             else:
-                await ctx.send('No active focus session found.')
-        else:
-            await ctx.send('Usage: /focus start [duration_minutes] OR /focus stop')
-
-    async def _add_log(self, user_id: int, minutes: int, topic: str = ''):
-        date_str = datetime.datetime.utcnow().strftime('%Y-%m-%d')
-        # Persist structured log
-        ts = _now_ts()
-        guild_id = None
-        try:
-            # best-effort: find a guild id from bot.active_focus or None
-            sess = self.active_focus.get(user_id)
-            if sess:
-                guild_id = sess.get('guild_id')
+                minutes = int(float(time_str))
         except Exception:
-            guild_id = None
+            await ctx.send('Could not parse time. Use `time:30` or `time:1.5h` or `time:30m`.')
+            return
 
-        await DB.add_study_log(user_id=user_id, minutes=int(minutes), ts=ts, topic=topic, guild_id=guild_id)
-
-        # Also increment leaderboard if we have a guild context
-        if guild_id:
-            try:
-                await DB.increment_leaderboard(guild_id, user_id, int(minutes))
-            except Exception as e:
-                print(f'[STUDY] Failed to increment leaderboard: {e}')
-
-        # Update streak
-        await self._update_streak(user_id)
-        # Send a small DM summary of today's totals (best-effort)
+        ts = _now_ts()
+        await DB.add_study_log(ctx.author.id, minutes, ts, topic)
+        # update streak/leaderboard (best-effort)
         try:
-            # compute today's logs
-            today = datetime.datetime.utcnow().date()
-            since_ts = int(datetime.datetime(today.year, today.month, today.day).timestamp())
-            rows = await DB.get_user_logs(user_id, since_ts=since_ts)
-            total = sum([int(r['minutes']) for r in rows]) if rows else 0
-            user = await self.bot.fetch_user(user_id)
-            try:
-                await user.send(f"📊 You studied {total} minutes today.🔥 Keep it up!")
-            except Exception:
-                pass
+            guild_id = ctx.guild.id if ctx.guild else None
+            if guild_id:
+                await DB.increment_leaderboard(guild_id, ctx.author.id, minutes)
         except Exception:
             pass
+
+        await ctx.send(f'Logged {minutes} minutes for {subject or "(no subject)"} — topic: {topic}')
+
+    @commands.hybrid_command(name='logs')
+    async def logs(self, ctx, action: str = None):
+        """View logs: !logs view"""
+        if action == 'view':
+            rows = await DB.get_user_logs(ctx.author.id)
+            if not rows:
+                await ctx.send('No study logs found.')
+                return
+            lines = []
+            total = 0
+            for r in rows[:10]:
+                ts = int(r['ts'])
+                minutes = int(r['minutes'])
+                topic = r.get('topic') or ''
+                total += minutes
+                lines.append(f'- {minutes} min — {topic} — <t:{ts}:f>')
+            lines.append(f'**Total minutes:** {total}')
+            await ctx.send('\n'.join(lines))
+            return
+        await ctx.send('Usage: logs view')
+
+
+async def setup(bot: commands.Bot):
+    await DB.init_db()
+    await bot.add_cog(Study(bot))
 
     async def _update_streak(self, user_id: int):
         # simple streak: if user logged something today, increment if yesterday logged

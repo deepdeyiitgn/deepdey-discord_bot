@@ -86,7 +86,7 @@ class Motivation(commands.Cog):
         except Exception:
             return None
 
-    @commands.Listener()
+    @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         """Listen for messages that might need motivation."""
         # Skip bot messages and commands

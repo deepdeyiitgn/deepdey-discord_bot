@@ -14,7 +14,7 @@ class Owner(commands.Cog):
 
     @commands.hybrid_command(name='bot_restart', description='Restart the bot and reload all files')
     @commands.is_owner()
-    async def bot_restart(self, ctx):
+    async def restart_bot(self, ctx):
         """Restart the bot and reload all files (Owner only)"""
         try:
             await ctx.send("🔄 Restarting bot and reloading all files...")
