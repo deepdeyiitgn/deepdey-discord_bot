@@ -1,0 +1,110 @@
+Prefix and Slash commands (high-level list)
+
+AFK
+- !afk [reason] — set AFK (prefix)
+- /afk [reason] — set AFK (slash)
+- !afk remove — remove AFK
+- /afk remove — remove AFK
+
+Ads (admin)
+- !ads — show ads settings
+- !ads setthreshold <count> — set ad threshold
+- !ads settext <text> — set ad text
+- !ads enable — enable ads
+- !ads disable — disable ads
+- /ads — show ads settings (slash)
+
+Games
+- !truth — random truth
+- /truth — random truth
+- !dare — random dare
+- /dare — random dare
+- !quiz start — start quiz in chat
+- /quiz — start interactive quiz (slash)
+- !quiz leaderboard — show quiz leaderboard
+- !rps <choice> — play rock-paper-scissors
+- /rps <choice> — play rock-paper-scissors (slash)
+- !guess — start guess-the-number game
+- /guess — start guess-the-number (slash)
+
+Quotes
+- !quote add <text> — add a quote
+- !quote list — list quotes
+- /quote add <text> — add quote (slash)
+- /quote list — list quotes (slash)
+
+Todos
+- !todo add <item> — add todo
+- !todo list — list todos
+- !todo done <id> — mark done
+- /todo add — add todo (slash)
+- /todo list — list todos (slash)
+- /todo done — mark todo as done (slash)
+
+Reminders
+- !remindme <time> <message> — set reminder
+- /remindme <time> <message> — set reminder (slash)
+
+Announcements
+- !announce set <channel> <message> — set an announcement
+- /announce set — set an announcement (slash)
+
+Autoreply
+- !autoreply add <trigger> <response>
+- !autoreply remove <trigger>
+- !autoreply list
+- Slash equivalents available
+
+Media
+- !media upload <file> — upload file to media folder
+- !media list — list media files
+- !media send <filename> — send file into channel
+- !media sendrandom — send random media
+- Slash equivalents available
+
+Admin
+- !kick <member> [reason]
+- !ban <member> [reason]
+- !unban <member>
+- Slash equivalents available
+
+Misc
+- !time — show server time
+- /time — show server time (slash)
+- !date — show date
+- /date — show date (slash)
+- !weather <location> — show weather
+- /weather <location> — show weather (slash)
+
+Study (new)
+- !focus start <minutes> — start a Pomodoro-style focus session (prefix)
+- /focus start duration: <minutes> — start focus (slash)
+- !focus stop — stop active focus session and log time
+- /focus stop — stop active focus session
+- !log <subject> <time> [topic] — log study minutes (e.g., 2h or 30m)
+- /log subject:maths time:2h topic:integration — log study time (slash)
+- !streak — show your current study streak
+- /streak — show streak (slash)
+- !leaderboard — show top study users this week
+- /leaderboard — show top study users (slash)
+- !doubt <question> — submit a doubt/question for mentors to review
+- /doubt question: How do I approach kinematics? — submit doubt (slash)
+- !motivate [text] — AI motivational reply (uses Gemini when configured)
+- /motivate prompt: I'm tired — get AI motivation
+
+# Music
+- /join — bot joins your voice channel and starts playing the default Spotify playlist
+- /leave — bot leaves the voice channel and stops playback
+- /restart — owner-only; reload music playlist and clear caches
+
+# Additional study features
+- !focusroom start <minutes> — start focusroom (voice guard) for the channel
+- /focusroom start duration: <minutes> — start focusroom (slash)
+- !focusroom stop — stop focusroom
+- /partner start — start Study Partner mode in channel (timed prompts)
+- /remind subject:<subject> at:<HH:MM> message:<text> — schedule a reminder
+- /progress update subject:physics percent:60 — update progress tracker
+
+Notes:
+- Many commands have both prefix and slash variants. Use `!` prefix by default or `/` slash commands once synced.
+- For full usage details and examples, see command_examples.txt

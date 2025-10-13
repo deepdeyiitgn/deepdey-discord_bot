@@ -1,0 +1,13 @@
+# render.yaml
+services:
+  - type: web
+    name: discord-study-bot
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python bot.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+    scaling:
+      minInstances: 1
+      maxInstances: 1

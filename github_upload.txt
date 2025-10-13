@@ -1,0 +1,105 @@
+GitHub upload commands (copy/paste)
+
+PowerShell:
+
+.
+# activate venv if desired
+.\.venv\Scripts\Activate.ps1
+# initialize and push
+```plaintext
+GitHub upload & overwrite commands (copy/paste)
+
+IMPORTANT SAFETY NOTES
+- These commands act on your local repository and the remote you point them at.
+- Be very careful with the "force" commands: they will overwrite the remote branch history and can permanently remove commits from the remote repo.
+- Replace <your-username> and <your-repo> and verify the remote URL before running any destructive command.
+
+1) Recommended: Normal push (safe)
+
+PowerShell (Windows):
+
+# (optional) activate venv if you use one
+.\.venv\Scripts\Activate.ps1
+
+# initialize and push
+git init
+git add --all
+git commit -m "Initial commit - StudyBot"
+git branch -M main
+# set remote (use HTTPS or SSH as you prefer)
+git remote add origin https://github.com/<your-username>/<your-repo>.git
+git push -u origin main
+
+Bash / macOS / Linux:
+
+# (optional) activate venv
+source .venv/bin/activate
+
+# initialize and push
+git init
+git add --all
+git commit -m "Initial commit - StudyBot"
+git branch -M main
+git remote add origin https://github.com/<your-username>/<your-repo>.git
+git push -u origin main
+
+
+2) Force-overwrite remote with local (DANGEROUS - will replace remote history)
+
+# Use this only if you intentionally want the remote branch to be replaced by your local content.
+# It force-pushes all local branches and tags to the remote, overwriting history.
+
+PowerShell:
+
+git remote set-url origin https://github.com/<your-username>/<your-repo>.git
+git add --all
+git commit -m "Reinitialize repository (force overwrite)" || echo "No changes to commit"
+# Force push all branches and tags (warning: destructive)
+git push --force --all origin
+git push --force --tags origin
+
+Bash:
+
+git remote set-url origin https://github.com/<your-username>/<your-repo>.git
+git add --all
+git commit -m "Reinitialize repository (force overwrite)" || echo "No changes to commit"
+git push --force --all origin
+git push --force --tags origin
+
+
+3) Alternative: Reset remote branch history cleanly (orphan branch method)
+
+# This creates a new orphan branch locally with only your current files and force-pushes it
+# onto the remote's main branch, effectively replacing history with a single commit.
+
+PowerShell / Bash (same commands):
+
+# create an orphan branch
+git checkout --orphan clean-main
+git add --all
+git commit -m "Reinitialize repo: single-commit snapshot"
+# Force push the orphan branch to remote main (replace remote history)
+git push --force origin clean-main:main
+# Optionally delete the local orphan branch and check out main
+git branch -D clean-main
+git checkout main
+
+
+4) If the remote 'origin' already exists and you want to replace it entirely
+
+# If a remote already exists and you need to replace it, either update the remote URL
+# then use one of the methods above, or remove the remote and re-add it:
+
+git remote remove origin
+git remote add origin https://github.com/<your-username>/<your-repo>.git
+# then use the push / force commands as above
+
+
+5) Final checks
+- Verify remote URL:  git remote -v
+- View local branches: git branch --all
+- If you are unsure, push to a non-critical repo or a new repo first to confirm the behavior.
+
+If you want, I can prepare a short PowerShell script that prompts you to confirm the destructive steps before running them.
+
+```

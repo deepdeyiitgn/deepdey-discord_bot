@@ -1,0 +1,1280 @@
+ <!-- Festive Popup (user-provided code integrated) -->
+  <!-- Navaratri & Dussehra Popup | Dates: 22 Sept 2025 – 2 Oct 2025 -->
+  <div id="festive-popup-container">
+    <div id="festive-popup-overlay">
+      <div id="festive-popup">
+  <button id="close-popup-btn" title="Close" aria-label="Close popup">&times;</button>
+        <h2 id="popup-title"></h2>
+        <p id="popup-message"></p>
+        <div id="countdown-timer"></div>
+        <div id="stopwatch" style="display:none;"></div>
+        <div class="popup-buttons">
+          <button class="popup-btn" id="generate-flowers-btn">🌸 Shower Flowers</button>
+          <button class="popup-btn" id="get-blessed-btn">🙏 Receive Blessings</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="blessing-popup-overlay">
+      <div id="blessing-popup">
+        <h3 id="blessing-title"></h3>
+        <p id="blessing-message"></p>
+        <button class="popup-btn" id="close-blessing-btn" aria-label="Close blessing popup">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* Scroll reveal (simple) with per-element data-delay support */
+    (function(){
+      // reveal elements with optional data-delay (ms)
+      const revealEls = document.querySelectorAll('.reveal');
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if(e.isIntersecting){
+            const delay = parseInt(e.target.dataset.delay) || 0;
+            setTimeout(() => {
+              e.target.classList.add('visible');
+              const card = e.target.querySelector('.card') || e.target;
+              if(card) card.classList.add('revealed');
+            }, delay);
+            io.unobserve(e.target);
+          }
+        });
+      }, {threshold:0.12});
+      revealEls.forEach(el => io.observe(el));
+    })();
+
+    // Small UI helpers: hamburger menu, owner animation, demo buttons
+    (function(){
+      const hamb = document.getElementById('hamburger');
+      const navLinks = document.getElementById('nav-links');
+      if(hamb && navLinks){
+        hamb.addEventListener('click', ()=> navLinks.classList.toggle('show'));
+      }
+
+      // Owner name animation toggle on hover/click
+      const ownerAnim = document.getElementById('owner-anim');
+      const ownerLink = document.getElementById('owner-link');
+      if(ownerAnim){
+        ownerAnim.classList.add('pulse');
+        ownerAnim.addEventListener('click', ()=>{
+          ownerAnim.classList.toggle('pulse');
+        });
+      }
+      if(ownerLink){
+        ownerLink.addEventListener('mouseenter', ()=> ownerAnim && ownerAnim.classList.add('pulse'));
+        ownerLink.addEventListener('mouseleave', ()=> ownerAnim && ownerAnim.classList.remove('pulse'));
+      }
+
+      // Toast helper
+      function showToast(text){
+        const t = document.createElement('div');
+        t.textContent = text;
+        t.style.position = 'fixed';
+        t.style.bottom = '22px';
+        t.style.right = '22px';
+        t.style.padding = '12px 18px';
+        t.style.background = 'linear-gradient(90deg,#1E90FF,#2E8B57)';
+        t.style.color = '#fff';
+        t.style.borderRadius = '12px';
+        t.style.boxShadow = '0 8px 30px rgba(0,0,0,.5)';
+        t.style.zIndex = 120000;
+        document.body.appendChild(t);
+        setTimeout(()=> t.style.opacity = '0', 2400);
+        setTimeout(()=> t.remove(), 3000);
+      }
+
+      const tryQuiz = document.getElementById('try-quiz');
+      const tryTodo = document.getElementById('try-todo');
+      if(tryQuiz) tryQuiz.addEventListener('click', ()=> showToast('Open Discord and run /quiz start in the server.'));
+      if(tryTodo) tryTodo.addEventListener('click', ()=> showToast('Try: !todo add Read chapter 2 — check server chat.'));
+
+      // small emoji animation: add discord-like animated emoji next to Discord CTAs
+      const discordCTAs = document.querySelectorAll('a[href*="discord.gg"], a[href*="discord.com"]');
+      discordCTAs.forEach(a=>{
+        const span = document.createElement('span');
+        span.className = 'emoji-animated sparkle';
+        span.textContent = '💬';
+        span.style.marginLeft = '8px';
+        a.appendChild(span);
+      });
+
+      // Accessibility: update hamburger aria-expanded
+      if(hamb){
+        hamb.setAttribute('aria-expanded', 'false');
+        hamb.addEventListener('click', ()=>{
+          const expanded = hamb.getAttribute('aria-expanded') === 'true';
+          hamb.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+        });
+      }
+
+      // Back to top
+      const back = document.getElementById('back-to-top');
+      if(back){ back.addEventListener('click', ()=> window.scrollTo({top:0,behavior:'smooth'})); }
+    })();
+
+    /* Typing accent in hero (subtle loop) */
+    (function(){
+      const words = ['StudyBot','Focus Engine','Quiz Master','Revision Buddy'];
+      const el = document.querySelector('.typing');
+      let i=0, j=0, forward=true;
+      function tick(){
+        const w = words[i];
+        if(forward){ j++; if(j> w.length){ forward=false; setTimeout(tick,900); return } }
+        else { j--; if(j<0){ forward=true; i=(i+1)%words.length; setTimeout(tick,300); return } }
+        el.textContent = w.slice(0,j);
+        setTimeout(tick,120);
+      }
+      tick();
+    })();
+
+    /* Popup code (adapted from provided script) */
+    (function(){
+      // festiveData as provided (kept smaller for brevity, but uses user's mapping)
+      const festiveData = {
+        '2025-09-23': { day: 1, title: 'Happy Navaratri! Day 1', message: 'May the divine grace of Maa Shailaputri bring you strength. Shower blessings.', blessing: 'On Day 1, we worship Maa Shailaputri.', image: 'https://images.pexels.com/photos/17585093/pexels-photo-17585093.jpeg' },
+        '2025-09-24': { day: 2, title: 'Shubh Navaratri! Day 2', message: 'May Maa Brahmacharini guide your spirit.', blessing: 'Maa Brahmacharini represents asceticism and devotion.', image: 'https://images.pexels.com/photos/17585093/pexels-photo-17585093.jpeg' },
+        '2025-09-25': { day: 3, title: 'Joyous Navaratri! Day 3', message: 'May the glow of Maa Chandraghanta fill your life with courage.', blessing: 'Maa Chandraghanta is the symbol of bravery.', image: 'https://images.pexels.com/photos/17585093/pexels-photo-17585093.jpeg' },
+        '2025-09-26': { day: 4, title: 'Happy Navaratri! Day 4', message: 'Creative energy of Maa Kushmanda bless your world.', blessing: 'Maa Kushmanda bestows health and abundance.', image: 'https://images.pexels.com/photos/17585093/pexels-photo-17585093.jpeg' },
+        '2025-09-27': { day: 5, title: 'Blessed Navaratri! Day 5', message: 'Feel the warmth of Maa Skandamata\'s love.', blessing: 'Skandamata symbolizes selfless love.', image: 'https://images.pexels.com/photos/17585093/pexels-photo-17585093.jpeg' },
+        '2025-09-28': { day: 6, title: 'Divine Navaratri! Day 6', message: 'May Maa Katyayani empower you to conquer challenges.', blessing: 'Maa Katyayani grants strength to overcome obstacles.', image: 'https://images.pexels.com/photos/17585093/pexels-photo-17585093.jpeg' },
+        '2025-09-29': { day: 7, title: 'Shubho Maha Saptami!', message: 'Wishing you a vibrant start to Durga Puja celebrations!', blessing: 'Maha Saptami marks the formal beginning of Durga Puja.', image: 'https://images.pexels.com/photos/17585116/pexels-photo-17585116.jpeg' },
+        '2025-09-30': { day: 8, title: 'Shubho Maha Ashtami!', message: 'May Maa Durga bless you with strength and fortitude.', blessing: 'Maha Ashtami celebrates Maa Durga\'s victory over evil.', image: 'https://images.pexels.com/photos/17585116/pexels-photo-17585116.jpeg' },
+        '2025-10-01': { day: 9, title: 'Shubho Maha Navami!', message: 'May all your prayers be answered and life filled with prosperity.', blessing: 'Maha Navami celebrates final victory of the Goddess.', image: 'https://images.pexels.com/photos/17585116/pexels-photo-17585116.jpeg' },
+        '2025-10-02': { day: 10, title: 'Happy Vijayadashami!', message: 'Victory of good over evil — Shubho Bijoya!', blessing: 'Vijayadashami celebrates triumph and new beginnings.', image: 'https://images.pexels.com/photos/17585116/pexels-photo-17585116.jpeg' }
+      };
+      const postDussehraDate = new Date('2025-10-02T00:00:00');
+
+      const popupOverlay = document.getElementById('festive-popup-overlay');
+      const popup = document.getElementById('festive-popup');
+      const closeBtn = document.getElementById('close-popup-btn');
+      const titleEl = document.getElementById('popup-title');
+      const messageEl = document.getElementById('popup-message');
+      const countdownEl = document.getElementById('countdown-timer');
+      const stopwatchEl = document.getElementById('stopwatch');
+      const flowersBtn = document.getElementById('generate-flowers-btn');
+      const blessedBtn = document.getElementById('get-blessed-btn');
+      const blessingOverlay = document.getElementById('blessing-popup-overlay');
+      const blessingTitle = document.getElementById('blessing-title');
+      const blessingMessage = document.getElementById('blessing-message');
+      const closeBlessingBtn = document.getElementById('close-blessing-btn');
+
+      let intervalId;
+      const today = new Date();
+      const todayString = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+      const currentData = festiveData[todayString];
+
+      function showMainPopup() {
+        // Show popup only once per session (sessionStorage), respects festiveData and postDussehraDate
+        try {
+          if (sessionStorage.getItem('festivePopupShown')) return;
+        } catch (e) {
+          // If sessionStorage is unavailable, fall back to showing popup
+        }
+
+        if (currentData) {
+          setupPopupContent(currentData);
+          popupOverlay.style.display = 'flex';
+          startCountdown();
+        } else if (today >= postDussehraDate) {
+          setupStopwatchPopup();
+          popupOverlay.style.display = 'flex';
+          startStopwatch();
+        }
+
+        try { sessionStorage.setItem('festivePopupShown', '1'); } catch(e){}
+      }
+      function setupPopupContent(data) {
+        titleEl.textContent = data.title;
+        messageEl.textContent = data.message;
+        popup.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url('${data.image}')`;
+        blessedBtn.style.display = 'inline-flex';
+        countdownEl.style.display = 'inline-block';
+        stopwatchEl.style.display = 'none';
+      }
+      function setupStopwatchPopup() {
+        titleEl.textContent = 'It will happen again next year! 🌸';
+        messageEl.textContent = '✨ Victory of Good Over Evil, Light Over Darkness, and Love Over Hatred. May this Vijaya Dashami remind us that every ending carries the seed of a new beginning — every goodbye, a promise of return.';
+        popup.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url('https://i.postimg.cc/Y9CkRzsq/65155711dce8135d31068666-1695897361989.jpg')`;
+        blessedBtn.style.display = 'none';
+        countdownEl.style.display = 'none';
+        stopwatchEl.style.display = 'inline-block';
+      }
+      function closeMainPopup() {
+        popup.style.animation = 'zoomOut 0.4s forwards';
+        setTimeout(() => {
+          popupOverlay.style.display = 'none';
+          popup.style.animation = 'zoomIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+        }, 400);
+      }
+      function startCountdown() {
+        if(intervalId) clearInterval(intervalId);
+        intervalId = setInterval(() => {
+          const now = new Date();
+          const nextDay = new Date(now);
+          nextDay.setDate(now.getDate() + 1);
+          nextDay.setHours(0,0,0,0);
+          const diff = nextDay - now;
+          const h = Math.floor(diff / (1000*60*60));
+          const m = Math.floor((diff % (1000*60*60)) / (1000*60));
+          const s = Math.floor((diff % (1000*60)) / 1000);
+          countdownEl.innerHTML = `Next day begins in: ${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`;
+        },1000);
+      }
+      function startStopwatch() {
+        if(intervalId) clearInterval(intervalId);
+        intervalId = setInterval(() => {
+          const diff = new Date() - postDussehraDate;
+          const d = Math.floor(diff / (1000*60*60*24));
+          const h = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+          const m = Math.floor((diff % (1000*60*60)) / (1000*60));
+          const s = Math.floor((diff % (1000*60)) / 1000);
+          stopwatchEl.innerHTML = `Time since Dussehra: ${d}d ${h}h ${m}m ${s}s`;
+        },1000);
+      }
+      flowersBtn.addEventListener('click', () => {
+        for (let i = 0; i < 30; i++) {
+          const petal = document.createElement('div');
+          petal.className = 'flower-petal';
+          petal.style.left = Math.random() * 100 + 'vw';
+          petal.style.animationDuration = Math.random() * 3 + 4 + 's';
+          petal.style.animationDelay = Math.random() * 2 + 's';
+          petal.style.backgroundColor = `hsl(${Math.random() * 60 + 300}, 100%, 70%)`;
+          petal.style.transform = `rotate(${Math.random() * 360}deg)`;
+          document.body.appendChild(petal);
+          setTimeout(() => petal.remove(), 7000);
+        }
+      });
+      blessedBtn.addEventListener('click', () => {
+        if (currentData) {
+            blessingTitle.textContent = currentData.title;
+            blessingMessage.textContent = currentData.blessing;
+            blessingOverlay.style.display = 'flex';
+        }
+      });
+      closeBtn.addEventListener('click', closeMainPopup);
+      closeBlessingBtn.addEventListener('click', () => blessingOverlay.style.display = 'none');
+      showMainPopup();
+    })();
+  </script>
+
+  <style>
+    /* popup CSS extracted for scope */
+    @import url('https://fonts.googleapis.com/css2?family=Lobster&family=Poppins:wght@400;600&display=swap');
+    #festive-popup-overlay, #blessing-popup-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.75); z-index:99999; display:none; justify-content:center; align-items:center; padding:15px; box-sizing:border-box; }
+    #festive-popup, #blessing-popup { position:relative; background-size:cover; background-position:center; padding:30px 40px; border-radius:20px; text-align:center; color:white; font-family:'Poppins',sans-serif; max-width:95%; width:600px; box-shadow:0 10px 40px rgba(255,152,0,0.5); border:2px solid #ff9800; }
+    #blessing-popup { background:#fff; color:#333 }
+    #festive-popup h2 { font-family:'Lobster',cursive; font-size:clamp(2rem,6vw,2.4rem); margin-bottom:15px; color:#FFD700; text-shadow:3px 3px 12px rgba(0,0,0,.7) }
+    #festive-popup p { font-size:1.05rem; margin-bottom:12px }
+    #countdown-timer, #stopwatch { font-size:1.1rem; font-weight:600; margin-top:14px; background:rgba(0,0,0,0.6); padding:10px; border-radius:10px; display:inline-block }
+    .popup-buttons{margin-top:18px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+    .popup-btn{background:linear-gradient(45deg,#ff9800,#f57c00);color:white;border:none;padding:10px 18px;border-radius:50px;cursor:pointer;font-weight:700}
+    #close-popup-btn{position:absolute;top:10px;right:15px;background:transparent;border:none;color:white;font-size:2rem;cursor:pointer}
+    .flower-petal{position:fixed;top:-20px;width:14px;height:14px;border-radius:50% 0;animation:fall linear infinite;z-index:100000}
+    @keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+  </style>
+  <style>
+    /* Device preview helper styles */
+    #device-preview-wrapper { transition: width 320ms ease, height 320ms ease; margin:0 auto }
+    @media (max-width:640px){ .wrap{padding:14px} .brand h1{font-size:1rem} }
+    /* Smooth toggle reduces heavy box-shadows/animations for low-end devices */
+    .reduced-motion * { animation: none !important; transition: none !important }
+  </style>
+
+  <script>
+    // Anti-inspect: disable right-click + common developer shortcuts, but allow F11 and normal left-clicks
+    (function(){
+      // block context menu
+      window.addEventListener('contextmenu', function(e){ e.preventDefault(); }, {passive:false});
+
+      // block common devtools shortcuts: F12, Ctrl+Shift+I, Ctrl+Shift+C, Ctrl+Shift+J, Ctrl+U
+      window.addEventListener('keydown', function(e){
+        // Allow F11 (fullscreen) and simple navigation keys
+        if (e.key === 'F11') return;
+        // Ctrl/Meta+U (view-source) or Ctrl+Shift+I / J / C or F12
+        const isMac = navigator.platform.toUpperCase().indexOf('MAC')>=0;
+        const macMeta = isMac && e.metaKey; // Cmd key on mac
+        if (e.key === 'F12' || (e.ctrlKey && e.key.toLowerCase()==='u') || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key.toUpperCase())) || (macMeta && e.key.toLowerCase()==='u')){
+          e.preventDefault(); e.stopPropagation();
+        }
+      }, true);
+
+      // discourage opening devtools via mouse double-click selecting source
+      document.addEventListener('mousedown', function(e){
+        // only allow left-clicks normally
+        if (e.button !== 0) { e.preventDefault(); }
+      }, {passive:false});
+    })();
+
+    // Smooth toggle in header (accessibility/performance control)
+    (function(){
+      const btn = document.getElementById('toggle-smooth-header');
+      let reduced = false;
+      btn.addEventListener('click', () => {
+        reduced = !reduced;
+        if (reduced) document.body.classList.add('reduced-motion'); else document.body.classList.remove('reduced-motion');
+        btn.textContent = reduced ? 'Performance' : 'Smooth';
+      });
+    })();
+    
+    // Device detection: add body classes (device-phone / device-tablet / device-desktop / device-tv)
+    (function(){
+      const ua = navigator.userAgent || '';
+      const body = document.body;
+      const root = document.documentElement;
+
+      function applyDevice(d){
+        body.classList.remove('device-phone','device-tablet','device-desktop','device-tv');
+        body.classList.add('device-'+d);
+        // set CSS variable for max width so .wrap picks it up
+        if(d === 'phone'){
+          root.style.setProperty('--maxw','420px');
+          root.style.fontSize = '14px';
+        } else if(d === 'tablet'){
+          root.style.setProperty('--maxw','820px');
+          root.style.fontSize = '15px';
+        } else if(d === 'tv'){
+          root.style.setProperty('--maxw','1800px');
+          root.style.fontSize = '18px';
+        } else {
+          root.style.setProperty('--maxw','1100px');
+          root.style.fontSize = '';
+        }
+      }
+
+      function detect(){
+        const w = Math.max(window.innerWidth, screen.width || 0);
+        let device = 'desktop';
+        if(/Mobi|Android|iPhone|iPad|iPod|Windows Phone/i.test(ua) || w <= 480) device = 'phone';
+        else if((w > 480 && w <= 1024) || /Tablet|iPad/i.test(ua)) device = 'tablet';
+        else if(w >= 1600) device = 'tv';
+        else device = 'desktop';
+        applyDevice(device);
+      }
+
+      detect();
+      // react on resize/orientation change
+      let resizeTimer;
+      window.addEventListener('resize', function(){
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(detect, 150);
+      });
+    })();
+  </script>
+
+ <script>
+        // Copy-paste this into your site. Change TARGET_URL to monitor another host.
+        // REFRESH_MS controls realtime update frequency (ms).
+
+        (() => {
+            const TARGET_URL = window.location.origin; // <-- change if you want to monitor other URL
+            const REFRESH_MS = 5000; // update every 5 seconds
+
+            // Minimal CSS injected (Updated for bottom-center and improved mobile view)
+            const style = document.createElement('style');
+            style.textContent = `
+            /* Button: Fixed bottom-center on all screen sizes */
+            #sysBtn{
+                position:fixed;
+                left:50%; /* Center horizontally */
+                transform:translateX(-50%); /* Adjust for own width */
+                bottom:20px;
+                z-index:2147483647;
+                width:48px;
+                height:48px;
+                border-radius:50%;
+                border:none;
+                background:#0f172a;
+                color:#fff;
+                font-size:20px;
+                display:none;
+                align-items:center;
+                justify-content:center;
+                cursor:pointer;
+                box-shadow:0 8px 22px rgba(2,6,23,0.4);
+                transition: transform 0.2s;
+            }
+            #sysBtn:hover { transform: translateX(-50%) scale(1.05); }
+
+            /* Popup: Fixed bottom-center on Desktop */
+            #sysPopup{
+                position:fixed;
+                left:50%;
+                transform:translateX(-50%);
+                bottom:80px;
+                width:360px;
+                max-width:96vw;
+                background:#fff;
+                border-radius:12px;
+                box-shadow:0 14px 36px rgba(2,6,23,0.18);
+                z-index:2147483647;
+                overflow:hidden;
+                font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+            }
+            #sysPopup .head{
+                display:flex;
+                border-bottom:1px solid #eef2f7;
+                background:#f8fafc;
+            }
+            #sysPopup .tab{
+                flex:1;
+                text-align:center;
+                padding:12px 6px;
+                font-weight:600;
+                font-size:13px;
+                cursor:pointer;
+                user-select:none;
+                color:#475569;
+                transition: background 0.1s;
+            }
+            #sysPopup .tab:hover { background:#f1f5f9; }
+            #sysPopup .tab.active{
+                background:#fff;
+                color:#0f172a;
+                border-bottom: 2px solid #0f172a;
+            }
+            #sysPopup .content{
+                padding:15px;
+                font-size:13px;
+                line-height:1.4;
+                max-height:450px;
+                overflow-y:auto;
+                color:#0f172a;
+                -webkit-overflow-scrolling: touch;
+            }
+            .sys-row{
+                display:flex;
+                justify-content:space-between;
+                margin:4px 0;
+                padding:8px;
+                border-radius:6px;
+                background:#fbfdff;
+                align-items:center;
+                border: 1px solid #eef2f7;
+            }
+            .sys-row small{color:#6b7280}
+            .est-tag{font-size:10px;color:#b91c1c;margin-left:6px;font-weight:700;padding:2px 6px;border-radius:4px;background:#fee2e2}
+            .note-box{
+                margin-top:12px;
+                padding:12px;
+                background:#f8fafc;
+                border-radius:8px;
+                font-size:12px;
+                color:#0f172a;
+                border-left: 3px solid #10b981;
+            }
+            
+            /* Mobile adjustment: Center vertically and horizontally for better visibility */
+            @media (max-width:640px){
+                #sysPopup{
+                    left:50%;
+                    top:50%;
+                    right:auto;
+                    bottom:auto;
+                    transform:translate(-50%,-50%);
+                    width:92vw;
+                    max-height:80vh; /* Limit height on small screens */
+                    box-shadow:0 25px 50px -12px rgba(0, 0, 0, 0.25);
+                }
+                #sysPopup .content {
+                    max-height: calc(80vh - 50px);
+                }
+                #sysBtn{
+                    width:52px;
+                    height:52px;
+                    font-size:24px;
+                }
+            }
+            `;
+            document.head.appendChild(style);
+
+            // Button
+            const btn = document.createElement('button');
+            btn.id = 'sysBtn';
+            btn.title = 'System Monitor';
+            btn.innerHTML = '⚡';
+            btn.style.display = 'none';
+            document.body.appendChild(btn);
+
+            // Popup
+            const popup = document.createElement('div');
+            popup.id = 'sysPopup';
+            popup.style.display = 'none';
+            popup.innerHTML = `
+                <div class="head">
+                <div class="tab active" data-tab="server">Server Metrics</div>
+                <div class="tab" data-tab="user">User/Browser Info</div>
+                </div>
+                <div class="content" id="sysContent">Initializing...</div>
+            `;
+            document.body.appendChild(popup);
+
+            const $ = (s, r = popup) => r.querySelector(s);
+
+            // Show button only when scrolled to bottom (footer area)
+            function checkScrollForButton() {
+                // Determine if the user is within 100px of the bottom of the page
+                const nearBottom = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 100);
+                btn.style.display = nearBottom ? 'flex' : 'none';
+            }
+            checkScrollForButton();
+            window.addEventListener('scroll', checkScrollForButton);
+            window.addEventListener('resize', checkScrollForButton);
+
+            // Tabs
+            popup.addEventListener('click', (e) => {
+                const t = e.target.closest('.tab');
+                if (!t) return;
+                popup.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+                t.classList.add('active');
+                updateOnce();
+            });
+
+            // Toggle
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+                updateOnce();
+            });
+            document.addEventListener('click', (e) => {
+                if (popup.style.display !== 'block') return;
+                if (!popup.contains(e.target) && e.target !== btn) popup.style.display = 'none';
+            });
+
+            // Measure server (ping, status, size, headers) - best effort; may be limited by CORS
+            async function measureServer() {
+                const start = performance.now();
+                let ping = '—';
+                let status = '—';
+                let sizeBytes = null;
+                let headersObj = {};
+                try {
+                    const resp = await fetch(TARGET_URL, { method: 'GET', cache: 'no-store' });
+                    const end = performance.now();
+                    ping = Math.round(end - start) + ' ms';
+                    status = `${resp.status} ${resp.statusText}`;
+                    const cl = resp.headers.get('content-length');
+                    if (cl) sizeBytes = parseInt(cl, 10);
+                    else {
+                        // If no content-length, try to get size from blob
+                        const blob = await resp.clone().blob();
+                        sizeBytes = blob.size;
+                    }
+                    ['content-type','cache-control','last-modified','etag','server','date'].forEach(k => {
+                        const v = resp.headers.get(k);
+                        if (v) headersObj[k] = v;
+                    });
+                } catch (err) {
+                    ping = 'ERR';
+                    status = 'Fetch failed (CORS/network)';
+                    sizeBytes = null;
+                    headersObj = {};
+                }
+                return { ping, status, sizeBytes, headersObj };
+            }
+
+            // User info via browser APIs
+            async function getUserInfo() {
+                const nav = navigator;
+                const conn = nav.connection || nav.mozConnection || nav.webkitConnection || null;
+                let batteryInfo = null;
+                try { if (navigator.getBattery) { const b = await navigator.getBattery(); batteryInfo = { level: Math.round(b.level*100)+'%', charging: b.charging }; } } catch(e){ batteryInfo=null; }
+                const perf = performance;
+                let mem = null;
+                if (perf && perf.memory) {
+                    mem = {
+                        usedJSHeapSize: Math.round(perf.memory.usedJSHeapSize/1024/1024) + ' MB',
+                        totalJSHeapSize: Math.round(perf.memory.totalJSHeapSize/1024/1024) + ' MB'
+                    };
+                }
+
+                // cookies count
+                const cookieStr = document.cookie || '';
+                const cookiesCount = cookieStr ? cookieStr.split(';').length : 0;
+
+                // time info
+                const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'n/a';
+                const localTime = new Date().toLocaleString();
+
+                return {
+                    userAgent: nav.userAgent,
+                    platform: nav.platform,
+                    language: nav.language,
+                    cores: nav.hardwareConcurrency || 'n/a',
+                    cookieEnabled: nav.cookieEnabled,
+                    cookiesCount,
+                    online: nav.onLine,
+                    connection: conn ? { effectiveType: conn.effectiveType, downlink: conn.downlink, rtt: conn.rtt } : null,
+                    battery: batteryInfo,
+                    memory: mem,
+                    deviceMemory: navigator.deviceMemory || 'n/a',
+                    plugins: navigator.plugins ? navigator.plugins.length : 'n/a',
+                    touchPoints: navigator.maxTouchPoints || 0,
+                    doNotTrack: nav.doNotTrack || 'n/a',
+                    viewport: { w: window.innerWidth, h: window.innerHeight },
+                    timezone: tz,
+                    localTime
+                };
+            }
+
+            // Helpers
+            function humanBytes(n) {
+                if (n === null || n === undefined) return '—';
+                if (typeof n !== 'number') return n;
+                const sizes = ['B','KB','MB','GB','TB'];
+                if (n === 0) return '0 B';
+                const i = Math.floor(Math.log(n)/Math.log(1024));
+                return (n/Math.pow(1024,i)).toFixed(i?2:0) + ' ' + sizes[i];
+            }
+
+            function renderServerTab(data) {
+                const rows = [];
+                rows.push(`<div class="sys-row"><div><small>Target URL</small></div><div><small style="max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">${TARGET_URL}</small></div></div>`);
+                rows.push(`<div class="sys-row"><div><small>Ping Latency</small></div><div><strong>${data.ping}</strong></div></div>`);
+                rows.push(`<div class="sys-row"><div><small>HTTP Status</small></div><div><strong>${data.status}</strong></div></div>`);
+                rows.push(`<div class="sys-row"><div><small>Response Size</small></div><div><strong>${humanBytes(data.sizeBytes)}</strong></div></div>`);
+                const hdrs = Object.keys(data.headersObj || {});
+                if (hdrs.length) {
+                    hdrs.forEach(k => rows.push(`<div class="sys-row"><div><small>${k}</small></div><div><small style="max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap">${data.headersObj[k]}</small></div></div>`));
+                }
+                
+                // Estimated (simulated) section - clearly labelled as ESTIMATED (SIMULATED)
+                rows.push(`<div style="margin-top:10px;border-top:1px dashed #eef2f7;padding-top:10px;color:#374151;font-size:12px"><strong>Server Internal Metrics</strong> <span class="est-tag">SIMULATED</span></div>`);
+                const estCpu = (Math.floor(Math.random()*40)+10) + '%';
+                const estRam = (Math.floor(Math.random()*50)+20) + '%';
+                const estDisk = (Math.floor(Math.random()*60)+15) + '%';
+                rows.push(`<div class="sys-row"><div><small>CPU Load (est)</small></div><div><strong>${estCpu}</strong></div></div>`);
+                rows.push(`<div class="sys-row"><div><small>RAM Usage (est)</small></div><div><strong>${estRam}</strong></div></div>`);
+                rows.push(`<div class="sys-row"><div><small>Disk Usage (est)</small></div><div><strong>${estDisk}</strong></div></div>`);
+                rows.push(`<div class="note-box">Note: CPU/RAM/Disk shown above are client-side random **simulations** as browsers cannot access host internals. Ping, Status, and Response size are measured live (subject to browser CORS restrictions).</div>`);
+                return rows.join('');
+            }
+
+            function renderUserTab(info) {
+                const r = [];
+                r.push(`<div class="sys-row"><div><small>Browser/UA</small></div><div style="max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap"><small>${info.userAgent}</small></div></div>`);
+                r.push(`<div class="sys-row"><div><small>OS Platform</small></div><div><strong>${info.platform}</strong></div></div>`);
+                r.push(`<div class="sys-row"><div><small>Viewport Size</small></div><div><strong>${info.viewport.w} × ${info.viewport.h}</strong></div></div>`);
+                r.push(`<div class="sys-row"><div><small>CPU Cores</small></div><div><strong>${info.cores}</strong></div></div>`);
+                r.push(`<div class="sys-row"><div><small>Device Memory</small></div><div><strong>${info.deviceMemory}</strong></div></div>`);
+                r.push(`<div class="sys-row"><div><small>JS Heap (Used/Total)</small></div><div><small>${info.memory ? (info.memory.usedJSHeapSize + ' / ' + info.memory.totalJSHeapSize) : 'n/a'}</small></div></div>`);
+                r.push(`<div class="sys-row"><div><small>Connection Status</small></div><div><small>${info.online ? `Online · ${info.connection ? `${info.connection.effectiveType} · ${info.connection.downlink}Mbps · rtt ${info.connection.rtt}ms` : 'n/a'}` : 'Offline'}</small></div></div>`);
+                r.push(`<div class="sys-row"><div><small>Timezone / Local Time</small></div><div><small>${info.timezone} · ${info.localTime}</small></div></div>`);
+                r.push(`<div class="sys-row"><div><small>Cookies</small></div><div><small>enabled:${info.cookieEnabled} · count:${info.cookiesCount}</small></div></div>`);
+                
+                // Show approximate storage sizes
+                try {
+                    r.push(`<div class="sys-row"><div><small>localStorage Size</small></div><div><small>${(function(){ try { return humanBytes(new Blob([JSON.stringify(localStorage)]).size); } catch(e){ return 'n/a'; } })()}</small></div></div>`);
+                } catch(e) {}
+                try {
+                    r.push(`<div class="sys-row"><div><small>sessionStorage Size</small></div><div><small>${(function(){ try { return humanBytes(new Blob([JSON.stringify(sessionStorage)]).size); } catch(e){ return 'n/a'; } })()}</small></div></div>`);
+                } catch(e) {}
+                
+                if (info.battery) r.push(`<div class="sys-row"><div><small>Battery Status</small></div><div><small>${info.battery.level}${info.battery.charging? ' · charging':''}</small></div></div>`);
+                r.push(`<div class="note-box">Privacy Note: **No data is stored or sent anywhere.** All values shown are read locally from your browser using standard Web APIs.</div>`);
+                return r.join('');
+            }
+
+            // Update logic
+            async function updateOnce() {
+                const active = popup.querySelector('.tab.active')?.dataset?.tab || 'server';
+                const c = $('#sysContent');
+                c.innerHTML = '<div style="text-align:center; padding:20px;">Loading data...</div>';
+                if (active === 'server') {
+                    const s = await measureServer();
+                    c.innerHTML = renderServerTab(s);
+                } else {
+                    const u = await getUserInfo();
+                    c.innerHTML = renderUserTab(u);
+                }
+            }
+
+            // Auto-refresh while popup open
+            setInterval(async () => {
+                if (popup.style.display !== 'block') return;
+                const active = popup.querySelector('.tab.active')?.dataset?.tab || 'server';
+                if (active === 'server') {
+                    const s = await measureServer();
+                    // Only update content, no need to show 'Loading'
+                    $('#sysContent').innerHTML = renderServerTab(s);
+                } else {
+                    const u = await getUserInfo();
+                    $('#sysContent').innerHTML = renderUserTab(u);
+                }
+            }, REFRESH_MS);
+
+            // Initial message
+            (async () => {
+                $('#sysContent').innerHTML = 'Ready — click a tab to load real-time data.';
+            })();
+
+        })();
+    </script>
+
+    <!-- Diwali and Winter Theme Enhancements -->
+    <style>
+      /* Winter Body Background */
+      body {
+        background: linear-gradient(135deg, 
+          #0f172a 0%,
+          #1a1f35 50%,
+          #0f172a 100%
+        );
+        position: relative;
+        overflow-x: hidden;
+      }
+      
+      /* Snow Effect */
+      .snow-container {
+        position: fixed;
+        width: 100vw;
+        height: 100vh;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 1;
+      }
+      
+      .snowflake {
+        --size: 1vw;
+        width: var(--size);
+        height: var(--size);
+        background: white;
+        border-radius: 50%;
+        position: absolute;
+        top: -5vh;
+        filter: blur(1px);
+      }
+
+      @keyframes snowfall {
+        0% {
+          transform: translateY(-10vh) translateX(0) rotate(0deg);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(100vh) translateX(20px) rotate(360deg);
+          opacity: 0.2;
+        }
+      }
+
+      /* Diwali Popup Styles */
+      .diwali-popup {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.85);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .diwali-popup-content {
+        background: linear-gradient(135deg, #2c1810 0%, #1a0f0a 100%);
+        padding: 40px;
+        border-radius: 20px;
+        position: relative;
+        max-width: 500px;
+        text-align: center;
+        border: 2px solid #ff9933;
+        box-shadow: 
+          0 0 50px rgba(255, 153, 51, 0.3),
+          inset 0 0 30px rgba(255, 153, 51, 0.2);
+        animation: glowPulse 2s infinite alternate;
+      }
+
+      @keyframes glowPulse {
+        0% { box-shadow: 0 0 50px rgba(255, 153, 51, 0.3), inset 0 0 30px rgba(255, 153, 51, 0.2); }
+        100% { box-shadow: 0 0 70px rgba(255, 153, 51, 0.4), inset 0 0 40px rgba(255, 153, 51, 0.3); }
+      }
+
+      .close-diwali-popup {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: none;
+        border: none;
+        color: #ff9933;
+        font-size: 24px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 1;
+      }
+
+      .close-diwali-popup:hover {
+        transform: scale(1.2);
+        color: #ffb366;
+      }
+
+      .diwali-title {
+        color: #ff9933;
+        font-size: 36px;
+        margin: 20px 0;
+        text-shadow: 0 0 10px rgba(255, 153, 51, 0.5);
+        font-family: 'Poppins', sans-serif;
+        animation: titleGlow 2s infinite alternate;
+      }
+
+      @keyframes titleGlow {
+        0% { text-shadow: 0 0 10px rgba(255, 153, 51, 0.5); }
+        100% { text-shadow: 0 0 20px rgba(255, 153, 51, 0.8); }
+      }
+
+      .diwali-message {
+        color: #ffb366;
+        font-size: 18px;
+        margin: 20px 0;
+        line-height: 1.6;
+        font-family: 'Poppins', sans-serif;
+      }
+
+      .diya-container {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        margin: 0 auto;
+      }
+
+      .diya-svg {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto;
+        filter: drop-shadow(0 0 10px rgba(255, 153, 51, 0.3));
+      }
+
+      .diya-svg svg {
+        width: 100%;
+        height: 100%;
+      }
+
+      .flame {
+        position: absolute;
+        top: 25%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 20px;
+        height: 30px;
+        background: linear-gradient(to bottom,
+          rgba(255, 255, 255, 0.8) 0%,
+          rgba(255, 204, 0, 0.8) 60%,
+          rgba(255, 153, 51, 0.4) 100%
+        );
+        border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+        animation: flicker 1s infinite alternate;
+        filter: blur(2px);
+      }
+
+      @keyframes flicker {
+        0%, 100% { 
+          transform: translateX(-50%) scale(1);
+          opacity: 1;
+          border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+        }
+        50% { 
+          transform: translateX(-50%) scale(0.8);
+          opacity: 0.8;
+          border-radius: 40% 40% 40% 40% / 50% 50% 30% 30%;
+        }
+      }
+
+      .diwali-decoration {
+        width: 100%;
+        height: 40px;
+        margin: 20px 0;
+        opacity: 0.8;
+        animation: patternFloat 3s infinite alternate;
+      }
+
+      .diwali-decoration svg {
+        width: 100%;
+        height: 100%;
+      }
+
+      /* Fireworks */
+      .firework-container {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      .rocket {
+        position: absolute;
+        width: 4px;
+        height: 15px;
+        background: #ff9933;
+        bottom: 0;
+      }
+
+      @keyframes rocketLaunch {
+        0% { 
+          transform: translateY(0) scale(1);
+          opacity: 1;
+        }
+        70% { opacity: 1; }
+        100% { 
+          transform: translateY(-100vh) scale(0.8);
+          opacity: 0;
+        }
+      }
+
+      .explosion {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        transform-origin: center;
+      }
+
+      .particle {
+        position: absolute;
+        width: 3px;
+        height: 3px;
+        border-radius: 50%;
+        transform-origin: center;
+      }
+
+      @keyframes explode {
+        0% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(30);
+          opacity: 0;
+        }
+      }
+
+      /* Sky Lanterns */
+      .sky-lantern {
+        position: absolute;
+        width: 30px;
+        height: 45px;
+        background: radial-gradient(circle at center, 
+          rgba(255, 153, 51, 0.8) 0%,
+          rgba(255, 153, 51, 0.4) 60%,
+          transparent 100%
+        );
+        border-radius: 50% 50% 20% 20%;
+        filter: blur(1px);
+      }
+
+      @keyframes float {
+        0% {
+          transform: translate(0, 0) rotate(0deg);
+        }
+        50% {
+          transform: translate(20px, -20px) rotate(5deg);
+        }
+        100% {
+          transform: translate(0, -40px) rotate(0deg);
+        }
+      }
+
+      /* Enhanced Rangoli */
+      .rangoli {
+        width: 100%;
+        height: 80px;
+        margin: 20px 0;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .rangoli-pattern {
+        width: 80px;
+        height: 80px;
+        position: relative;
+      }
+
+      .rangoli-pattern::before,
+      .rangoli-pattern::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 60px;
+        height: 60px;
+        border: 2px solid #ff9933;
+        border-radius: 50%;
+        transform: translate(-50%, -50%) rotate(45deg);
+        animation: rangoliSpin 10s linear infinite;
+      }
+
+      .rangoli-pattern::after {
+        width: 40px;
+        height: 40px;
+        animation-direction: reverse;
+      }
+
+      .rangoli-dots {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+      }
+
+      .rangoli-dot {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        background: #ff9933;
+        border-radius: 50%;
+        animation: dotGlow 2s infinite alternate;
+      }
+
+      @keyframes rangoliSpin {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+      }
+
+      @keyframes dotGlow {
+        0% { 
+          transform: scale(1);
+          opacity: 0.6;
+          box-shadow: 0 0 5px #ff9933;
+        }
+        100% { 
+          transform: scale(1.2);
+          opacity: 1;
+          box-shadow: 0 0 10px #ff9933;
+        }
+      }
+
+      @keyframes patternFloat {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(-5px); }
+      }
+
+      .diwali-footer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
+        color: #ffb366;
+        font-family: 'Poppins', sans-serif;
+      }
+
+      .diwali-logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        animation: logoSpin 4s infinite alternate;
+      }
+
+      @keyframes logoSpin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      /* Firework Effects */
+      .firework {
+        position: absolute;
+        pointer-events: none;
+      }
+
+      .firework::before {
+        content: '';
+        position: absolute;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        animation: firework 2s infinite;
+      }
+
+      .firework:nth-child(1)::before { 
+        background: #ff9933; 
+        top: 20%; 
+        left: 20%; 
+      }
+
+      .firework:nth-child(2)::before { 
+        background: #ffb366; 
+        top: 40%; 
+        right: 20%; 
+        animation-delay: 0.5s; 
+      }
+
+      .firework:nth-child(3)::before { 
+        background: #ff7f00; 
+        bottom: 20%; 
+        left: 50%; 
+        animation-delay: 1s; 
+      }
+
+      @keyframes firework {
+        0% { 
+          transform: scale(1); 
+          opacity: 1;
+          box-shadow: 0 0 0 0px rgba(255,153,51,0.5);
+        }
+        100% { 
+          transform: scale(30); 
+          opacity: 0;
+          box-shadow: 0 0 0 20px rgba(255,153,51,0);
+        }
+      }
+    </style>
+
+    <script>
+      // Show Diwali popup with animation
+      document.addEventListener('DOMContentLoaded', () => {
+        // Create snow container
+        const snowContainer = document.createElement('div');
+        snowContainer.className = 'snow-container';
+        document.body.appendChild(snowContainer);
+
+        // Create snow animation
+        function createSnowflake() {
+          const snowflake = document.createElement('div');
+          snowflake.className = 'snowflake';
+          snowflake.style.left = Math.random() * 100 + 'vw';
+          snowflake.style.animation = `snowfall ${Math.random() * 3 + 2}s linear forwards`;
+          snowflake.style.opacity = Math.random();
+          snowflake.style.transform = `scale(${Math.random()})`;
+          
+          snowContainer.appendChild(snowflake);
+          
+          snowflake.addEventListener('animationend', () => {
+            snowflake.remove();
+          });
+        }
+
+        // Generate snowflakes
+        setInterval(createSnowflake, 100);
+
+        // Create and show Diwali popup
+        setTimeout(() => {
+          const popup = document.createElement('div');
+          popup.className = 'diwali-popup';
+          popup.innerHTML = `
+            <div class="diwali-popup-content">
+              <button class="close-diwali-popup">&times;</button>
+              <div class="diya-container">
+                <div class="diya-svg">
+                  <svg viewBox="0 0 100 100" width="100" height="100">
+                    <path d="M50 70 C20 70 20 40 50 40 C80 40 80 70 50 70" fill="#CD853F"/>
+                    <ellipse cx="50" cy="40" rx="15" ry="5" fill="#8B4513"/>
+                    <div class="flame"></div>
+                  </svg>
+                </div>
+              </div>
+              <h2 class="diwali-title">Happy Diwali! 🪔</h2>
+              <div class="diwali-decoration">
+                <svg viewBox="0 0 100 20" width="100%" height="40">
+                  <pattern id="rangoli" patternUnits="userSpaceOnUse" width="20" height="20">
+                    <circle cx="10" cy="10" r="3" fill="#ff9933"/>
+                    <circle cx="10" cy="10" r="6" fill="none" stroke="#ff9933" stroke-width="0.5"/>
+                  </pattern>
+                  <rect width="100" height="20" fill="url(#rangoli)"/>
+                </svg>
+              </div>
+              <p class="diwali-message">
+                May the festival of lights brighten your studies and illuminate your path to success! 
+                <br><br>
+                Study with joy, learn with passion! ✨
+              </p>
+              <div class="diwali-footer">
+                <img src="https://i.postimg.cc/MHYsLfPz/Neon-Green-Circle-Frame-Fitness-You-Tube-Profile-Picturedurga-puja.png" 
+                     alt="StudyBot Logo" class="diwali-logo">
+                <span>~ StudyBot Team</span>
+              </div>
+            </div>
+            <div class="firework"></div>
+            <div class="firework"></div>
+            <div class="firework"></div>
+          `;
+          
+          document.body.appendChild(popup);
+          
+          // Animate popup entrance
+          requestAnimationFrame(() => {
+            popup.style.display = 'flex';
+            popup.style.opacity = '0';
+            requestAnimationFrame(() => {
+              popup.style.transition = 'opacity 0.5s ease';
+              popup.style.opacity = '1';
+            });
+          });
+
+          // Handle close button
+          const closeBtn = popup.querySelector('.close-diwali-popup');
+          closeBtn.addEventListener('click', () => {
+            popup.style.opacity = '0';
+            setTimeout(() => popup.remove(), 500);
+          });
+        }, 1000);
+      });
+    </script>
+  
+</body>
+</html>
+<script>
+  function showPopup() {
+    document.getElementById('popup').style.display = 'block';
+    startDiwaliEffects();
+  }
+
+  function closePopup() {
+    document.getElementById('popup').style.display = 'none';
+    stopDiwaliEffects();
+  }
+
+  // Create and manage Diwali effects
+  function startDiwaliEffects() {
+    const fireworkContainer = document.createElement('div');
+    fireworkContainer.className = 'firework-container';
+    document.body.appendChild(fireworkContainer);
+
+    // Launch fireworks every few seconds
+    const fireworksInterval = setInterval(() => {
+      launchFirework(fireworkContainer);
+    }, 2000);
+
+    // Release sky lanterns periodically
+    const lanternInterval = setInterval(() => {
+      releaseSkyLantern();
+    }, 3000);
+
+    // Store intervals for cleanup
+    window.diwaliEffects = {
+      fireworks: fireworksInterval,
+      lanterns: lanternInterval
+    };
+  }
+
+  function stopDiwaliEffects() {
+    if (window.diwaliEffects) {
+      clearInterval(window.diwaliEffects.fireworks);
+      clearInterval(window.diwaliEffects.lanterns);
+      
+      // Remove containers
+      const fireworkContainer = document.querySelector('.firework-container');
+      if (fireworkContainer) fireworkContainer.remove();
+      
+      // Remove any remaining lanterns
+      document.querySelectorAll('.sky-lantern').forEach(lantern => lantern.remove());
+      
+      delete window.diwaliEffects;
+    }
+  }
+
+  function launchFirework(container) {
+    const rocket = document.createElement('div');
+    rocket.className = 'rocket';
+    rocket.style.left = Math.random() * 100 + 'vw';
+    container.appendChild(rocket);
+
+    // Animate rocket
+    rocket.style.animation = 'rocketLaunch 1.5s ease-out forwards';
+
+    // Create explosion after rocket reaches top
+    setTimeout(() => {

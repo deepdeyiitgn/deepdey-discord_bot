@@ -1,0 +1,117 @@
+Example usages (all commands support both prefix and slash versions)
+
+AFK
+Prefix:
+- !afk I'm studying for 2 hours
+- !afk remove
+Slash:
+- /afk reason: I'm studying for 2 hours
+- /afk remove
+
+Ads (admin)
+Prefix:
+- !ads
+- !ads setthreshold 3
+- !ads settext Sponsored by ...
+- !ads enable
+- !ads disable
+Slash:
+- /ads
+- /ads setthreshold value: 3
+- /ads settext message: Sponsored by ...
+- /ads enable
+- /ads disable
+
+Games
+- !truth
+- /truth
+- !dare
+- /dare
+- !quiz start
+- /quiz
+- !quiz leaderboard
+- !rps rock
+- /rps choice: rock
+- !guess
+- /guess
+
+Quotes
+- !quote add "Education is the passport to the future."
+- !quote list
+- /quote add text: Education is the passport to the future.
+- /quote list
+
+Todos
+- !todo add Finish math homework
+- !todo list
+- !todo done 1
+- /todo add text: Finish math homework
+- /todo list
+- /todo done id: 1
+
+Reminders
+- !remindme 10m Take a break
+- /remindme time: 10m message: Take a break
+
+Announcements
+- !announce set #announcements "Daily motivation at 9AM"
+- /announce set channel: #announcements message: Daily motivation at 9AM
+
+Autoreply
+- !autoreply add hello Hi there!
+- !autoreply remove hello
+- !autoreply list
+
+Media
+- !media upload meme.png
+- !media list
+- !media send meme.png
+- !media sendrandom
+
+Admin
+- !kick @user Spamming links
+- !ban @user Repeated abuse
+- !unban user#1234
+- /kick member: @user reason: Spamming links
+
+Misc
+- !time
+- /time
+- !date
+- /date
+- !weather London
+- /weather London
+
+Study (examples)
+- !focus start 25
+- /focus start duration: 25
+- !focus stop
+- /focus stop
+- !log physics 2h kinematics
+- /log subject: physics time: 2h topic: kinematics
+- !streak
+- /streak
+- !leaderboard
+- /leaderboard
+- !doubt How do I approach projectile motion problems?
+- /doubt question: How do I approach projectile motion problems?
+- !motivate I'm feeling tired and unmotivated
+- /motivate prompt: I'm feeling tired and unmotivated
+
+# Music examples
+- /join
+- /leave
+- /restart  # owner only
+
+# Additional Study features (examples)
+- !focusroom start 25
+- /focusroom start duration: 25
+- !focusroom stop
+- /focusroom stop
+- !partner start
+- /partner start
+- !remind subject:maths at:18:00 message:"Start trigonometry practice"
+- /remind subject:maths at:18:00 message: "Start trigonometry practice"
+
+Notes:
+- Slash command syntax shown as form fields (depends on your client). Use the slash UI to fill fields when available.

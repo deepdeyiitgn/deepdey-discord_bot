@@ -1,0 +1,41 @@
+Files & Folders - quick reference
+
+Root files:
+- bot.py           : Entrypoint. Loads env, loads cogs, starts bot and syncs slash commands.
+- README.md        : Project documentation and usage guide.
+- requirements.txt : Python dependencies.
+- .env             : Environment variables (DISCORD_TOKEN, PREFIX). Keep secret.
+
+cogs/ (feature modules):
+- admin.py         : Admin tools (kick/ban/unban/mute) and confirmations.
+- ads.py           : Ads manager (per-guild ad text, threshold, enable/disable).
+- afk.py           : AFK set/remove and mention notifications with nick-tagging.
+- announcements.py : Scheduler and announcement setters for channels.
+- autoreply.py     : Add/remove/list auto-reply pairs per channel.
+- games.py         : Truth/Dare, quiz, rps, guess games and leaderboard.
+- media.py         : Media upload/list/send/sendrandom commands.
+- misc.py          : Small helper commands (time/date/weather).
+- quotes.py        : Quote bank management and scheduled quote posting.
+- reminders.py     : Reminder scheduling for users.
+- todo.py          : Personal todo list commands.
+- progress.py      : Progress/tracking utilities.
+- extras.py        : Misc extras and helper commands.
+
+data/ (runtime data):
+- games_bank.json  : Large bank of truths/dares/quiz questions.
+- quotes.json      : Stored quotes used by quotes cog.
+- quotes.txt       : Seed list of quotes.
+- reminders.json   : Stored reminders.
+- todos.json       : Stored TODO items.
+- studybot.db      : Optional SQLite DB file (if using aiosqlite)
+
+media/ (static uploads):
+- place uploaded files here; `media.py` serves these files to channels on request.
+
+utils/ (helpers):
+- helper.py        : Async JSON helpers and small shared utilities.
+- db.py            : Async DB wrapper using aiosqlite (get/set kv) with fallback.
+
+Notes:
+- Add new features as cogs inside `cogs/` with an `async def setup(bot)` that adds the cog.
+- Keep secrets out of source control; use `.env` or GitHub secrets for CI.

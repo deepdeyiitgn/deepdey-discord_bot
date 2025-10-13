@@ -1,0 +1,15 @@
+Title: 📚 StudyBot — Your Study Companion
+Description: Modular Discord bot for students: quizzes, reminders, games & community features.
+
+Fields:
+🔹 Features:
+- Study tools & reminders
+- Interactive quizzes
+- Fun games & leaderboard
+- Admin & moderation tools
+
+🔹 Owner:
+Deep Dey @deepdey.official
+
+ Use !help or /help to explore commands
+
