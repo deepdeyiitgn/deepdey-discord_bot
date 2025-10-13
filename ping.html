@@ -716,21 +716,64 @@ document.querySelector('.close-diwali-popup').addEventListener('click', function
 
 <div style="position:relative; width:100%; height:400px;">
   <iframe id="botIframe" src="https://deepdey-discord-bot.onrender.com/" 
-          style="width:100%; height:100%; border:0;"></iframe>
-  <!-- overlay to block right/middle clicks -->
-  <div id="iframeOverlay" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:10;"></div>
+          style="width:100%; height:100%; border:0;"
+          sandbox="allow-same-origin allow-scripts"></iframe>
+  <!-- Enhanced overlay to block all interactions except left clicks -->
+  <div id="iframeOverlay" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:10; 
+       user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;"></div>
 </div>
 
 <script>
 const overlay = document.getElementById('iframeOverlay');
+const iframe = document.getElementById('botIframe');
 
-// block right & middle click only
+// Prevent text selection
+overlay.addEventListener('selectstart', e => e.preventDefault());
+
+// Block all mouse events except left click
 overlay.addEventListener('mousedown', e => {
-    if(e.button !== 0) e.preventDefault(); // 0 = left click, allow it
+    if (e.button !== 0) { // 0 = left click
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    }
 });
 
-// block context menu (right click menu)
-overlay.addEventListener('contextmenu', e => e.preventDefault());
+// Block context menu everywhere in the iframe area
+overlay.addEventListener('contextmenu', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+});
+
+// Block keyboard shortcuts and special keys
+overlay.addEventListener('keydown', e => {
+    // Block all keyboard events
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+});
+
+// Block drag events
+overlay.addEventListener('dragstart', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+});
+
+// Additional mouse event blockers
+['auxclick', 'middleclick', 'mouseup', 'mousemove'].forEach(event => {
+    overlay.addEventListener(event, e => {
+        if (e.button !== 0) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
+    });
+});
+
+// Prevent iframe focus to block keyboard events
+iframe.addEventListener('focus', e => e.target.blur());
 </script>
 
 
