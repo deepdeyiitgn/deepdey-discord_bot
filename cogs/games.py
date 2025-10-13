@@ -109,12 +109,15 @@ class Games(commands.Cog):
     async def load_data(self):
         try:
             self.data = await async_load_json(DATA_PATH)
+            # Defensive: if file contains null or non-dict, replace with defaults
+            if not isinstance(self.data, dict):
+                self.data = {'leaderboard': {}, 'game_scores': {}, 'quiz_history': {}}
             # Ensure all required keys exist
-            if 'game_scores' not in self.data:
+            if 'game_scores' not in self.data or not isinstance(self.data.get('game_scores'), dict):
                 self.data['game_scores'] = {}
-            if 'leaderboard' not in self.data:
+            if 'leaderboard' not in self.data or not isinstance(self.data.get('leaderboard'), dict):
                 self.data['leaderboard'] = {}
-            if 'quiz_history' not in self.data:
+            if 'quiz_history' not in self.data or not isinstance(self.data.get('quiz_history'), dict):
                 self.data['quiz_history'] = {}
             await async_save_json(DATA_PATH, self.data)
         except FileNotFoundError:
