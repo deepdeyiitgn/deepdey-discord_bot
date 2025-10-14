@@ -103,3 +103,24 @@ git remote add origin https://github.com/<your-username>/<your-repo>.git
 If you want, I can prepare a short PowerShell script that prompts you to confirm the destructive steps before running them.
 
 ```
+# 1️⃣ Go inside your project folder
+cd "C:\Users\pujad\Downloads\Basic Maths PW\deepdey-discord_bot-main"
+
+# 2️⃣ Initialize git (agar pehle se .git folder hai, yeh ignore ho jaayega)
+git init
+
+# 3️⃣ Add remote repository
+git remote add origin https://github.com/deepdeyiitgn/deepdey-discord_bot.git
+git remote set-url origin https://github.com/deepdeyiitgn/deepdey-discord_bot.git
+
+# 4️⃣ Add all project files
+git add .
+
+# 5️⃣ Commit with a message
+git commit -m "Day 15: All New Features Added || New Deploy || 13-10-2025 | 12:51:56pm || Deep Dey - The FUTURE IITIAN 🎯" 
+
+# 6️⃣ Rename branch from master → main (so GitHub accepts it)
+git branch -M main
+
+# 7️⃣ Push to GitHub (force push for overwrite)
+git push origin main --force

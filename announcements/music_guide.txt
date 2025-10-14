@@ -1,0 +1,114 @@
+🎵 MUSIC BOT GUIDE 🎧
+
+Hey Music Lovers! 🎶
+
+Here's your complete guide to using our awesome Music Bot!
+
+🎵 BASIC COMMANDS
+
+!play [song/URL]
+• Play a song or playlist
+• Works with YouTube links
+• Supports search terms
+• Auto-joins voice channel
+• Creates queue for multiple songs
+
+!pause
+• Pause current track
+• Music stays in queue
+• Resume with !resume
+
+!resume
+• Continue paused music
+• Picks up where you left off
+• Queue remains intact
+
+!skip
+• Skip current song
+• Moves to next in queue
+• Works with DJ role
+
+🎧 QUEUE MANAGEMENT
+
+!queue
+• View current queue
+• Shows upcoming tracks
+• Displays duration
+• Shows current position
+
+!remove [position]
+• Remove song from queue
+• Use position number
+• Keep queue organized
+
+!clear
+• Clear entire queue
+• Fresh start
+• Requires DJ role
+
+🔄 PLAYBACK CONTROLS
+
+!loop
+• Toggle track loop
+• Repeat current song
+• Cancel with !loop again
+
+!shuffle
+• Randomize queue
+• Mix up your playlist
+• Keep it fresh
+
+!volume [1-100]
+• Adjust bot volume
+• Default is 100
+• DJ role required
+
+⚙️ ADVANCED FEATURES
+
+!nowplaying
+• Show current track
+• Display progress
+• See duration
+• View basic info
+
+!search [query]
+• Search for songs
+• Choose from results
+• Add to queue
+• Multiple options
+
+!disconnect
+• Bot leaves channel
+• Clears queue
+• Ends session
+
+📌 IMPORTANT NOTES
+
+1. Join a voice channel first
+2. One instance per server
+3. DJ role for special commands
+4. Keep volume reasonable
+5. Respect others' choices
+
+⚡ QUICK TIPS
+
+• Use full song names
+• Check queue before adding
+• Join voice first
+• Keep bot unmuted
+• Report issues to mods
+
+🎮 BEST PRACTICES
+
+1. Don't spam commands
+2. Share with others
+3. Use appropriate volumes
+4. Keep queues manageable
+5. Report any issues
+
+Remember:
+"Music brings us together!" 🎵
+
+Enjoy the tunes! 🎧
+
+#MusicBot #DiscordMusic #StudyTunes

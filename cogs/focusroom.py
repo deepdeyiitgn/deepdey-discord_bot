@@ -98,6 +98,92 @@ class FocusRoom(commands.Cog):
             end_time = time.time() + (duration * 60)
             self._focus_channels[channel.id] = {
                 'end_time': end_time,
+                'allowed_users': [ctx.author.id]
+            }
+
+            # Initial mute for non-participants
+            try:
+                for member in channel.members:
+                    if member.id != ctx.author.id and not member.bot:
+                        await member.edit(mute=True)
+            except discord.Forbidden:
+                await ctx.send('Warning: Missing permissions to mute members.')
+            
+            await ctx.send(f'Focus mode started for {duration} minutes! Only allowed users can speak.')
+            
+            # Schedule cleanup
+            await asyncio.sleep(duration * 60)
+            
+            # End focus mode if still active for this channel
+            if channel.id in self._focus_channels:
+                del self._focus_channels[channel.id]
+                try:
+                    for member in channel.members:
+                        await member.edit(mute=False)
+                    await ctx.send('Focus mode ended!')
+                except Exception:
+                    pass
+                    
+        elif action == 'stop':
+            if channel.id not in self._focus_channels:
+                await ctx.send('This channel is not in focus mode.')
+                return
+                
+            # End focus mode
+            del self._focus_channels[channel.id]
+            try:
+                for member in channel.members:
+                    await member.edit(mute=False)
+                await ctx.send('Focus mode stopped.')
+            except discord.Forbidden:
+                await ctx.send('Warning: Missing permissions to unmute members.')
+        else:
+            await ctx.send('Usage: !focusroom start [minutes=30] | !focusroom stop')
+
+    @focusroom.error
+    async def focusroom_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            await ctx.send('You need the "Mute Members" permission to use this command.')
+        else:
+            await ctx.send(f'Error: {error}')
+            
+    @commands.hybrid_command(name='allow')
+    @commands.has_permissions(mute_members=True)
+    async def allow(self, ctx, member: discord.Member):
+        """Allow a user to speak in the focus room"""
+        if not ctx.author.voice or not ctx.author.voice.channel:
+            await ctx.send('You need to be in a voice channel to use this command.')
+            return
+            
+        channel = ctx.author.voice.channel
+        if channel.id not in self._focus_channels:
+            await ctx.send('This channel is not in focus mode.')
+            return
+            
+        focus_info = self._focus_channels[channel.id]
+        if member.id in focus_info['allowed_users']:
+            await ctx.send(f'{member.display_name} is already allowed to speak.')
+            return
+            
+        focus_info['allowed_users'].append(member.id)
+        try:
+            await member.edit(mute=False)
+            await ctx.send(f'Allowed {member.display_name} to speak in the focus room.')
+        except discord.Forbidden:
+            await ctx.send('Warning: Missing permissions to unmute member.')
+            
+    @allow.error
+    async def allow_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            await ctx.send('You need the "Mute Members" permission to use this command.')
+        elif isinstance(error, commands.MemberNotFound):
+            await ctx.send('Member not found. Please mention a valid user.')
+        else:
+            await ctx.send(f'Error: {error}')
+
+
+async def setup(bot):
+    await bot.add_cog(FocusRoom(bot))
                 'allowed_users': {m.id for m in channel.members if not m.bot}
             }
             

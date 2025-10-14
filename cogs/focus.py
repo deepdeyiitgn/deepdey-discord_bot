@@ -91,13 +91,51 @@ class Focus(commands.Cog):
     @commands.hybrid_command(name='cancel')
     async def cancel(self, ctx):
         """Cancel your active focus timer"""
+        try:
+            if ctx.author.id not in self._active_timers:
+                await ctx.send('You don\'t have an active focus session.')
+                return
+                
+            timer = self._active_timers[ctx.author.id]
+            if 'task' in timer and not timer['task'].done():
+                timer['task'].cancel()
+                del self._active_timers[ctx.author.id]
+                await ctx.send('Focus session cancelled.')
+        except Exception as e:
+            await ctx.send(f'Error cancelling focus session: {e}')
+
+    @focus.error
+    async def focus_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send('Usage: !focus start [minutes=25]')
+        elif isinstance(error, commands.BadArgument):
+            await ctx.send('Please provide a valid duration in minutes.')
+        else:
+            await ctx.send(f'Error: {error}')
+
+    @cancel.error 
+    async def cancel_error(self, ctx, error):
+        await ctx.send(f'Error cancelling focus session: {error}')
+
+    @commands.hybrid_command(name='status')
+    async def status(self, ctx):
+        """Check your current focus session status"""
         if ctx.author.id not in self._active_timers:
             await ctx.send('You don\'t have an active focus session.')
             return
-            
+
         timer = self._active_timers[ctx.author.id]
-        if 'task' in timer and not timer['task'].done():
-            timer['task'].cancel()
+        remaining = int(timer['end_time'] - time.time())
+        if remaining > 0:
+            minutes = remaining // 60
+            seconds = remaining % 60
+            await ctx.send(f'You have {minutes}m {seconds}s remaining in your focus session.')
+        else:
+            await ctx.send('Your focus session is ending...')
+
+
+async def setup(bot):
+    await bot.add_cog(Focus(bot))
         del self._active_timers[ctx.author.id]
         await ctx.send('Focus session cancelled.')
 

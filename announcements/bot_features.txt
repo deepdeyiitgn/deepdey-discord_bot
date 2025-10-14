@@ -1,0 +1,89 @@
+🤖 MEET YOUR STUDY COMPANION: STUDYBOT! 🌟
+
+Hey Study Champions! Let me introduce you to your new best friend in this academic journey! 
+
+🎯 CORE FEATURES
+
+📚 STUDY MANAGEMENT
+• /focus - Start focused study sessions
+• /break - Schedule smart breaks
+• /track - Monitor your progress
+• /streak - Check your study streak
+• /stats - View detailed analytics
+
+🎵 MUSIC FEATURES
+• /play - Stream study music
+• /playlist - Access curated playlists
+• /volume - Adjust audio levels
+• /skip - Next track
+• /loop - Repeat favorite tracks
+
+⏰ TIME MANAGEMENT
+• /timer - Set study timers
+• /pomodoro - Use Pomodoro technique
+• /schedule - Plan your day
+• /remind - Set study reminders
+• /break - Schedule rest periods
+
+📊 PROGRESS TRACKING
+• Daily study hours
+• Subject-wise progress
+• Streak statistics
+• Performance graphs
+• Achievement badges
+
+🎮 FOCUS ROOM CONTROLS
+• Auto-mute management
+• Session tracking
+• Break notifications
+• Activity monitoring
+• Progress updates
+
+💪 MOTIVATION FEATURES
+• Daily quotes
+• Achievement alerts
+• Streak celebrations
+• Progress milestones
+• Community rankings
+
+🤝 COMMUNITY FEATURES
+• Group study coordination
+• Doubt solving assistance
+• Resource sharing
+• Event notifications
+• Community challenges
+
+📈 ANALYTICS & INSIGHTS
+• Study pattern analysis
+• Productivity trends
+• Subject balance charts
+• Time distribution
+• Performance metrics
+
+🎨 CUSTOMIZATION
+• Personal reminders
+• Custom study duration
+• Preferred music types
+• Break patterns
+• Notification style
+
+🏆 REWARDS & RECOGNITION
+• Study streaks
+• Achievement badges
+• Level progression
+• Special roles
+• Monthly highlights
+
+Remember:
+"StudyBot is not just a bot, it's your 24/7 study partner!" 🌟
+
+Tips for Best Experience:
+1. Set daily goals
+2. Maintain study streaks
+3. Use focus rooms
+4. Track your progress
+5. Celebrate achievements
+
+Let's achieve our dreams together! 💫
+
+#StudySmarter #BotCompanion #IITPrep #JEE2027

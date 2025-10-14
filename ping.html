@@ -716,21 +716,72 @@ document.querySelector('.close-diwali-popup').addEventListener('click', function
 
 <div style="position:relative; width:100%; height:400px;">
   <iframe id="botIframe" src="https://deepdey-discord-bot.onrender.com/" 
-          style="width:100%; height:100%; border:0;"></iframe>
-  <!-- overlay to block right/middle clicks -->
-  <div id="iframeOverlay" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:10;"></div>
+          style="width:100%; height:100%; border:0;"
+          sandbox="allow-same-origin allow-scripts"></iframe>
+  <!-- Enhanced overlay to block all interactions except left clicks -->
+  <div id="iframeOverlay" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:10; 
+       user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;"></div>
 </div>
 
 <script>
 const overlay = document.getElementById('iframeOverlay');
+const iframe = document.getElementById('botIframe');
 
-// block right & middle click only
-overlay.addEventListener('mousedown', e => {
-    if(e.button !== 0) e.preventDefault(); // 0 = left click, allow it
+// Prevent text selection on the overlay
+overlay.addEventListener('selectstart', e => e.preventDefault());
+
+// Use pointerdown so touch + mouse are handled. For primary (left) button,
+// temporarily disable the overlay's hit-testing so the click reaches the iframe.
+overlay.addEventListener('pointerdown', e => {
+  if (e.button !== 0) {
+    // Non-left click: block it
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+  }
+
+  // Left click: allow it through by disabling pointer events briefly.
+  // This makes the current click/focus go to the iframe underneath.
+  overlay.style.pointerEvents = 'none';
+  // Re-enable after a short delay so subsequent unwanted interactions remain blocked.
+  setTimeout(() => {
+    overlay.style.pointerEvents = 'auto';
+  }, 300);
 });
 
-// block context menu (right click menu)
-overlay.addEventListener('contextmenu', e => e.preventDefault());
+// Block context menu (right click) inside the iframe area
+overlay.addEventListener('contextmenu', e => {
+  e.preventDefault();
+  e.stopPropagation();
+  return false;
+});
+
+// Block drag events starting on the overlay
+overlay.addEventListener('dragstart', e => {
+  e.preventDefault();
+  e.stopPropagation();
+  return false;
+});
+
+// Block auxiliary mouse buttons at the document level as a fallback
+document.addEventListener('auxclick', e => {
+  if (e.button !== 0) {
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+  }
+}, true);
+
+// Block most keyboard events while the overlay is active (when pointer-events is not disabled)
+window.addEventListener('keydown', e => {
+  // If overlay is currently allowing pointer events to pass (i.e. temporarily disabled),
+  // we shouldn't block keyboard because the user likely interacts with the iframe.
+  if (overlay.style.pointerEvents === 'none') return;
+
+  // Block default keyboard actions to avoid copy/paste/etc while overlay is active
+  e.preventDefault();
+  e.stopPropagation();
+}, {capture: true});
 </script>
 
 

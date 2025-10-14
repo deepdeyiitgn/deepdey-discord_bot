@@ -693,6 +693,11 @@ Tips:
 For more advanced deployment (Heroku, Docker, VPS), I can add example workflows or Dockerfiles on request.
 
 ---
+
+![65155711dce8135d31068666_1695897361989](https://github.com/user-attachments/assets/bfb7e7c9-c721-4fba-8153-71e7b5654d5a)
+![An_HtWVS-iXRkVhAQwnzxTTlDxJf6fSRgyT7UNkYJZOxnoK5QND_ZeS9-gMG7kbR0aNbqBroVU_F-6XgQ05pDql_LVCPtWZyEejC6F_xUzPlncVI](https://github.com/user-attachments/assets/51148822-0883-4951-9b5f-473e4da799dc)
+
+
 <div align="center"> 
   
  [![Deep's GitHub stats](https://github-readme-stats.vercel.app/api?username=deepdeyiitgn&show_icons=true)](https://github.com/deepdeyiitgn/deepdey-discord_bot/)
