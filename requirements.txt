@@ -1,24 +1,35 @@
 # Core dependencies
 
+# Core Discord Bot
 discord.py>=2.3.2
 python-dotenv>=1.0.0
-aiofiles>=23.2.1
-requests>=2.31.0
-aiosqlite>=0.19.0
-pytz>=2023.3.post1
-aiohttp>=3.8.6
-Flask>=2.3.3
-Werkzeug>=3.0.1
-python-dateutil>=2.8.2
-APScheduler>=3.10.1
-pytest>=7.0.0
-yt-dlp
+
+# Music & Voice
+yt-dlp>=2023.12.30
 PyNaCl>=1.5.0
 SpeechRecognition>=3.10.0
 pydub>=0.25.1
+
+# Asynchronous Libraries
+aiohttp>=3.8.6
+aiofiles>=23.2.1
+aiosqlite>=0.19.0
+
+# Google APIs & AI
 google-generativeai>=0.3.2
-asyncio>=3.4.3
 google-api-python-client>=2.100.0
 google-auth>=2.22.0
 google-auth-httplib2>=0.1.1
 google-auth-oauthlib>=1.1.0
+
+# Web Framework (Optional)
+Flask>=2.3.3
+Werkzeug>=3.0.1
+
+# Utilities & Scheduling
+pytz>=2023.3.post1
+python-dateutil>=2.8.2
+APScheduler>=3.10.1
+
+# Development (Optional)
+pytest>=7.0.0

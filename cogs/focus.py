@@ -1,3 +1,5 @@
+# focus.py
+
 """Focus cog: Pomodoro timer and focus sessions."""
 import discord
 from discord.ext import commands, tasks
@@ -34,18 +36,18 @@ class Focus(commands.Cog):
         """Handle focus session completion."""
         if user_id not in self._active_timers:
             return
-        
+
         # Get channel and send completion message
         channel = self.bot.get_channel(channel_id)
         if channel:
             msg = random.choice(MOTIVATION)
             await channel.send(f"<@{user_id}> Focus session complete! {msg}")
-            
+
             # Log the session
             await db.DB.add_study_log(user_id, minutes, int(time.time()), "focus-session", guild_id)
             if guild_id:
                 await db.DB.increment_leaderboard(guild_id, user_id, minutes)
-        
+
         # Cleanup timer
         del self._active_timers[user_id]
 
@@ -56,14 +58,14 @@ class Focus(commands.Cog):
             old_timer = self._active_timers[user_id]
             if 'task' in old_timer and not old_timer['task'].done():
                 old_timer['task'].cancel()
-        
+
         # Create new timer
         end_time = time.time() + (minutes * 60)
         task = asyncio.create_task(
             asyncio.sleep(minutes * 60)
         )
         self._active_timers[user_id] = {'end_time': end_time, 'task': task}
-        
+
         # Wait for completion and cleanup
         try:
             await task
@@ -77,14 +79,14 @@ class Focus(commands.Cog):
         if action != 'start':
             await ctx.send('Usage: !focus start [minutes=25]')
             return
-            
+
         if duration < 1 or duration > 120:
             await ctx.send('Please choose a duration between 1 and 120 minutes.')
             return
-            
+
         guild_id = ctx.guild.id if ctx.guild else None
         await ctx.send(f'Starting {duration} minute focus session. Stay focused! 🎯')
-        
+
         # Start the timer
         await self._start_timer(ctx.author.id, guild_id, ctx.channel.id, duration)
 
@@ -95,7 +97,7 @@ class Focus(commands.Cog):
             if ctx.author.id not in self._active_timers:
                 await ctx.send('You don\'t have an active focus session.')
                 return
-                
+
             timer = self._active_timers[ctx.author.id]
             if 'task' in timer and not timer['task'].done():
                 timer['task'].cancel()
@@ -113,7 +115,7 @@ class Focus(commands.Cog):
         else:
             await ctx.send(f'Error: {error}')
 
-    @cancel.error 
+    @cancel.error
     async def cancel_error(self, ctx, error):
         await ctx.send(f'Error cancelling focus session: {error}')
 
@@ -135,25 +137,4 @@ class Focus(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(Focus(bot))
-        del self._active_timers[ctx.author.id]
-        await ctx.send('Focus session cancelled.')
-
-    @commands.hybrid_command(name='status')
-    async def status(self, ctx):
-        """Check your focus timer status"""
-        if ctx.author.id not in self._active_timers:
-            await ctx.send('You don\'t have an active focus session.')
-            return
-            
-        timer = self._active_timers[ctx.author.id]
-        remaining = int(timer['end_time'] - time.time())
-        minutes = remaining // 60
-        seconds = remaining % 60
-        await ctx.send(f'Focus session: {minutes}m {seconds}s remaining.')
-
-
-
-
-async def setup(bot: commands.Bot):
     await bot.add_cog(Focus(bot))
