@@ -33,3 +33,10 @@ APScheduler>=3.10.1
 
 # Development (Optional)
 pytest>=7.0.0
+
+# QR Generation & Image
+qrcode>=7.4.2
+Pillow>=10.0.0
+
+# HTTP Requests (for URL shortener + backup QR scan API)
+requests>=2.31.0
